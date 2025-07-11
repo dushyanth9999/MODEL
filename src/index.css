@@ -1,0 +1,486 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply transition-colors duration-300 bg-white text-gray-900;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-maroon-300 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-maroon-400;
+  }
+}
+
+@layer components {
+  /* Enhanced button styles */
+  .btn-primary {
+    @apply bg-maroon-600 text-white px-4 py-2 rounded-lg hover:bg-maroon-700 focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-maroon;
+  }
+  
+  .btn-secondary {
+    @apply bg-cream-100 text-maroon-800 px-4 py-2 rounded-lg hover:bg-cream-200 focus:ring-2 focus:ring-cream-500 focus:ring-offset-2 transition-all duration-200 font-medium;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-maroon-600 text-maroon-600 px-4 py-2 rounded-lg hover:bg-maroon-600 hover:text-white focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 transition-all duration-200 font-medium;
+  }
+  
+  /* Enhanced card styles */
+  .card {
+    @apply bg-white rounded-xl shadow-soft border border-gray-200 transition-all duration-200;
+  }
+  
+  .card-hover {
+    @apply hover:shadow-soft-lg hover:-translate-y-1;
+  }
+  
+  .card-maroon {
+    @apply bg-gradient-to-br from-maroon-50 to-cream-50 border-maroon-200;
+  }
+  
+  /* Enhanced input styles */
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  /* Status indicators */
+  .status-ok {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .status-issue {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .status-high-risk {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .status-na {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  /* Gradient backgrounds */
+  .gradient-maroon {
+    @apply bg-gradient-to-br from-maroon-50 to-maroon-100;
+  }
+  
+  .gradient-cream {
+    @apply bg-gradient-to-br from-cream-50 to-cream-100;
+  }
+  
+  /* Navigation styles */
+  .nav-link {
+    @apply flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors;
+  }
+  
+  .nav-link-active {
+    @apply bg-maroon-100 text-maroon-700;
+  }
+  
+  .nav-link-inactive {
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100;
+  }
+  
+  /* Logo styles */
+  .logo-container {
+    @apply flex items-center space-x-3;
+  }
+  
+  .logo-text {
+    @apply text-xl font-bold text-maroon-800;
+  }
+  
+  /* Notification styles */
+  .notification-badge {
+    @apply absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center;
+  }
+  
+  /* Loading styles */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-b-2 border-maroon-600;
+  }
+  
+  /* Modal styles */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm;
+  }
+  
+  .modal-content {
+    @apply bg-white rounded-xl shadow-2xl border;
+  }
+  
+  /* Chart container */
+  .chart-container {
+    @apply bg-white p-6 rounded-lg border shadow-soft;
+  }
+  
+  /* Share button styles */
+  .share-button {
+    @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2;
+  }
+  
+  /* Analytics card */
+  .analytics-card {
+    @apply bg-white p-6 rounded-xl border shadow-soft hover:shadow-soft-lg transition-all;
+  }
+  
+  /* Metric card */
+  .metric-card {
+    @apply p-6 rounded-xl border transition-all;
+  }
+  
+  /* Health score indicator */
+  .health-score-excellent {
+    @apply text-green-600;
+  }
+  
+  .health-score-good {
+    @apply text-yellow-600;
+  }
+  
+  .health-score-poor {
+    @apply text-red-600;
+  }
+  
+  /* Priority indicators */
+  .priority-critical {
+    @apply bg-red-100 text-red-800 border-red-200;
+  }
+  
+  .priority-high {
+    @apply bg-orange-100 text-orange-800 border-orange-200;
+  }
+  
+  .priority-medium {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+  }
+  
+  .priority-low {
+    @apply bg-blue-100 text-blue-800 border-blue-200;
+  }
+}
+
+@layer utilities {
+  /* Text gradient utilities */
+  .text-gradient-maroon {
+    @apply bg-gradient-to-r from-maroon-600 to-maroon-800 bg-clip-text text-transparent;
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  /* Smooth transitions */
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+  
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-transform duration-200 ease-out hover:-translate-y-1;
+  }
+  
+  .hover-glow {
+    @apply transition-shadow duration-200 ease-out hover:shadow-soft-lg;
+  }
+  
+  /* Focus styles */
+  .focus-ring {
+    @apply focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 focus:outline-none;
+  }
+  
+  /* Brand colors */
+  .bg-brand-primary {
+    @apply bg-maroon-600;
+  }
+  
+  .bg-brand-secondary {
+    @apply bg-cream-100;
+  }
+  
+  .text-brand-primary {
+    @apply text-maroon-600;
+  }
+  
+  .text-brand-secondary {
+    @apply text-cream-800;
+  }
+  
+  /* Responsive utilities */
+  .mobile-stack {
+    @apply flex-col space-y-2 space-x-0;
+  }
+  
+  .mobile-full {
+    @apply w-full;
+  }
+}
+
+/* Enhanced focus styles for accessibility */
+*:focus {
+  outline: none;
+}
+
+.focus-visible:focus-visible {
+  @apply ring-2 ring-maroon-500 ring-offset-2;
+}
+
+/* Enhanced selection styles */
+::selection {
+  @apply bg-maroon-600 text-white;
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break {
+    page-break-after: always;
+  }
+  
+  body {
+    @apply text-black bg-white;
+  }
+  
+  .card {
+    @apply border border-gray-400;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    @apply border-2 border-gray-900;
+  }
+  
+  .btn-primary {
+    @apply border-2 border-maroon-800;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Status indicator animations */
+.pulse-green {
+  animation: pulseGreen 2s infinite;
+}
+
+.pulse-red {
+  animation: pulseRed 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0%, 100% {
+    @apply bg-green-500;
+  }
+  50% {
+    @apply bg-green-400;
+  }
+}
+
+@keyframes pulseRed {
+  0%, 100% {
+    @apply bg-red-500;
+  }
+  50% {
+    @apply bg-red-400;
+  }
+}
+
+/* Custom logo styles */
+.niat-logo {
+  height: 40px;
+  width: auto;
+  filter: brightness(1.1);
+}
+
+/* Enhanced notification styles */
+.notification-enter {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.notification-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 300ms ease-out;
+}
+
+.notification-exit {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification-exit-active {
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 300ms ease-in;
+}
+
+/* QR Code styles */
+.qr-code-container {
+  @apply p-4 bg-white rounded-lg border-2 border-gray-200;
+}
+
+/* Share modal styles */
+.share-modal {
+  @apply bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
+
+/* Analytics chart styles */
+.chart-tooltip {
+  @apply bg-white border border-gray-200 rounded-lg shadow-lg p-3;
+}
+
+/* Advanced filter styles */
+.filter-chip {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors;
+}
+
+.filter-chip-active {
+  @apply bg-maroon-100 text-maroon-800 hover:bg-maroon-200;
+}
+
+/* Performance indicator styles */
+.performance-excellent {
+  @apply bg-green-500;
+}
+
+.performance-good {
+  @apply bg-yellow-500;
+}
+
+.performance-poor {
+  @apply bg-red-500;
+}
+
+/* Trend indicator styles */
+.trend-improving {
+  @apply text-green-600;
+}
+
+.trend-declining {
+  @apply text-red-600;
+}
+
+.trend-stable {
+  @apply text-blue-600;
+}
+
+/* Mobile responsive enhancements */
+@media (max-width: 640px) {
+  .mobile-stack {
+    @apply flex-col space-y-2 space-x-0;
+  }
+  
+  .mobile-full {
+    @apply w-full;
+  }
+  
+  .mobile-text-sm {
+    @apply text-sm;
+  }
+  
+  .mobile-p-2 {
+    @apply p-2;
+  }
+}
+
+/* Dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  .auto-dark {
+    @apply bg-gray-900 text-white;
+  }
+}
