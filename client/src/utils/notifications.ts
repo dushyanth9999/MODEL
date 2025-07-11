@@ -1,5 +1,19 @@
-import { Notification } from '../types';
+// import { Notification } from '../types/index';
 import { v4 as uuidv4 } from 'uuid';
+
+// Temporary inline type definition
+interface Notification {
+  id: string;
+  type: 'info' | 'warning' | 'error' | 'success';
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  actionUrl?: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  centerId?: string;
+  userId?: string;
+}
 
 export class NotificationService {
   private static notifications: Notification[] = [];
