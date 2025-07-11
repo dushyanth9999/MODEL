@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, BarChart3, FileText, Home, Upload, LogOut, User, Bell, Share2, Brain } from 'lucide-react';
+import { Building2, BarChart3, FileText, Home, Upload, LogOut, User, Bell, Share2, Brain, Moon, Sun } from 'lucide-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { NotificationService } from './utils/notifications';
 import Dashboard from './components/Dashboard';
 import DailyReportForm from './components/DailyReportForm';
@@ -19,6 +20,7 @@ function AppContent() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { theme, toggleTheme, isDark } = useTheme();
 
   useEffect(() => {
     // Subscribe to notifications
@@ -58,11 +60,11 @@ function AppContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-nxtwave-cream flex items-center justify-center">
+      <div className="min-h-screen bg-nxtwave-cream dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <img src="/logo-niat.png" alt="NxtWave Institute" className="h-16 w-auto mx-auto mb-4" />
           <div className="loading-spinner h-8 w-8 mx-auto mb-4"></div>
-          <p className="text-nxtwave-red font-medium">Loading NxtWave Operations Dashboard...</p>
+          <p className="text-nxtwave-red font-medium">Loading NIAT OPS DASHBOARD...</p>
         </div>
       </div>
     );
@@ -110,7 +112,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-nxtwave-cream transition-colors">
+    <div className="min-h-screen bg-nxtwave-cream dark:bg-gray-900 transition-colors">
       {/* Enhanced Navigation */}
       <nav className="bg-nxtwave-red shadow-sm border-b border-nxtwave-red-dark transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -118,7 +120,7 @@ function AppContent() {
             <div className="flex items-center space-x-8">
               <div className="logo-container">
                 <img src="/logo-niat.png" alt="NxtWave Institute" className="niat-logo" />
-                <span className="logo-text">Operations Dashboard</span>
+                <span className="logo-text">NIAT OPS DASHBOARD</span>
               </div>
               <div className="hidden md:flex space-x-6">
                 <button
@@ -172,11 +174,20 @@ function AppContent() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 text-nxtwave-cream hover:text-white hover:bg-nxtwave-red-dark rounded-md transition-colors"
+                title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+              >
+                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </button>
+
               {/* Notifications */}
               <div className="relative">
                 <button
                   onClick={() => setShowNotifications(true)}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors relative"
+                  className="p-2 text-nxtwave-cream hover:text-white hover:bg-nxtwave-red-dark rounded-md transition-colors relative"
                   title="Notifications"
                 >
                   <Bell className="h-5 w-5" />
@@ -191,17 +202,17 @@ function AppContent() {
               {/* User Info */}
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-nxtwave-cream" />
                   <div className="text-sm">
-                    <div className="font-medium text-gray-900">{user?.name}</div>
-                    <div className="text-gray-500 capitalize">
+                    <div className="font-medium text-nxtwave-cream">{user?.name}</div>
+                    <div className="text-nxtwave-cream opacity-75 capitalize">
                       {user?.role === 'cso' ? 'CSO' : user?.role}
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={logout}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                  className="p-2 text-nxtwave-cream hover:text-white hover:bg-nxtwave-red-dark rounded-md transition-colors"
                   title="Logout"
                 >
                   <LogOut className="h-5 w-5" />
@@ -209,7 +220,7 @@ function AppContent() {
               </div>
               
               {/* Date Display */}
-              <div className="text-sm text-gray-600 hidden lg:block">
+              <div className="text-sm text-nxtwave-cream opacity-75 hidden lg:block">
                 {new Date().toLocaleDateString('en-US', { 
                   weekday: 'long',
                   year: 'numeric',
@@ -238,9 +249,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -241,9 +241,9 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
 
   const getRoleBadgeColor = (role: User['role']) => {
     switch (role) {
-      case 'admin': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300';
-      case 'coo': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300';
-      case 'pm': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
+      case 'admin': return 'bg-nxtwave-red text-white';
+      case 'cso': return 'bg-nxtwave-gold text-nxtwave-red';
+      case 'pm': return 'bg-nxtwave-cream text-nxtwave-red';
       case 'viewer': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
@@ -487,13 +487,13 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
       <div className="flex items-center space-x-4">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+          className="flex items-center space-x-2 text-nxtwave-red hover:text-nxtwave-red-dark transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
           <span>Back to Dashboard</span>
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Panel</h1>
+          <h1 className="text-2xl font-bold text-nxtwave-red">NIAT Admin Panel</h1>
           <p className="text-gray-600 dark:text-gray-400">System administration and management</p>
         </div>
       </div>

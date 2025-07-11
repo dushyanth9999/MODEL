@@ -8,7 +8,7 @@
   }
   
   body {
-    @apply transition-colors duration-300 bg-white text-gray-900;
+    @apply transition-colors duration-300 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
     font-family: 'Inter', system-ui, sans-serif;
   }
   
@@ -47,7 +47,7 @@
   
   /* Enhanced card styles */
   .card {
-    @apply bg-white rounded-xl shadow-soft border border-gray-200 transition-all duration-200;
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700 transition-all duration-200;
   }
   
   .card-hover {
@@ -60,7 +60,7 @@
   
   /* Enhanced input styles */
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-nxtwave-red focus:border-transparent transition-all duration-200;
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-nxtwave-red focus:border-transparent transition-all duration-200;
   }
   
   /* Status indicators */
@@ -252,6 +252,11 @@
   /* Loading spinner */
   .loading-spinner {
     @apply border-4 border-nxtwave-cream border-t-nxtwave-red rounded-full animate-spin;
+  }
+  
+  /* Notification badge */
+  .notification-badge {
+    @apply absolute -top-1 -right-1 bg-nxtwave-red text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium;
   }
   
   /* Brand colors */

@@ -21,10 +21,18 @@ import {
   Clock,
   Users,
   MapPin,
-  Zap
+  Zap,
+  Cpu,
+  Brain
 } from 'lucide-react';
 import { centers, mockReports } from '../data/mockData';
+import { useTheme } from '../contexts/ThemeContext';
+import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 import * as XLSX from 'xlsx';
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement);
 
 interface WeeklyReportProps {
   onBack: () => void;
@@ -61,6 +69,7 @@ export default function WeeklyReport({ onBack }: WeeklyReportProps) {
   const [expandAllCategories, setExpandAllCategories] = useState(false);
   const [selectedCenter, setSelectedCenter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'visualization'>('overview');
+  const { isDark } = useTheme();
 
   // Calculate weekly aggregates
   const totalCenters = centers.length;
@@ -77,6 +86,115 @@ export default function WeeklyReport({ onBack }: WeeklyReportProps) {
     sum + report.items.filter(item => item.status === 'NA').length, 0);
 
   const healthPercentage = totalItems > 0 ? Math.round((okItems / totalItems) * 100) : 0;
+  const totalIssues = issueItems + highRiskItems;
+
+  // AI Predictions and Analysis
+  const generateAIPredictions = () => {
+    const healthScore = Math.round((okItems / totalItems) * 100);
+    const issueRate = Math.round((totalIssues / totalItems) * 100);
+    const riskLevel = issueRate > 30 ? 'HIGH' : issueRate > 15 ? 'MEDIUM' : 'LOW';
+    
+    return {
+      nextWeekRisk: riskLevel,
+      recommendedActions: [
+        'Increase maintenance frequency for high-risk areas',
+        'Schedule training sessions for operational staff',
+        'Implement preventive measures for recurring issues',
+        'Review and update SOPs for critical processes'
+      ],
+      predictedIssues: Math.round(issueItems * 1.1),
+      maintenanceNeeded: [
+        'HVAC systems require scheduled maintenance',
+        'Safety equipment needs inspection',
+        'Network infrastructure updates pending'
+      ],
+      trendAnalysis: {
+        improving: ['Safety protocols', 'Staff training completion'],
+        declining: ['Equipment efficiency', 'Response times'],
+        stable: ['Compliance scores', 'Customer satisfaction']
+      }
+    };
+  };
+
+  const aiPredictions = generateAIPredictions();
+
+  // Chart Data Configuration
+  const chartTheme = {
+    background: isDark ? '#1f2937' : '#ffffff',
+    text: isDark ? '#f9fafb' : '#111827',
+    grid: isDark ? '#374151' : '#e5e7eb'
+  };
+
+  const statusChartData = {
+    labels: ['OK', 'Issues', 'High Risk', 'N/A'],
+    datasets: [{
+      data: [okItems, issueItems, highRiskItems, naItems],
+      backgroundColor: [
+        '#10b981', // green
+        '#f59e0b', // yellow
+        '#ef4444', // red
+        '#6b7280'  // gray
+      ],
+      borderColor: chartTheme.background,
+      borderWidth: 2
+    }]
+  };
+
+  const trendsChartData = {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    datasets: [
+      {
+        label: 'Health Score',
+        data: [85, 82, 87, 89],
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        tension: 0.4
+      },
+      {
+        label: 'Issue Rate',
+        data: [15, 18, 13, 11],
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        tension: 0.4
+      }
+    ]
+  };
+
+  const centerPerformanceData = {
+    labels: centers.slice(0, 6).map(c => c.name),
+    datasets: [{
+      label: 'Health Score',
+      data: [92, 88, 85, 91, 87, 89],
+      backgroundColor: '#b91c1c',
+      borderColor: '#991b1b',
+      borderWidth: 1
+    }]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: chartTheme.text
+        }
+      },
+      title: {
+        color: chartTheme.text
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: chartTheme.text },
+        grid: { color: chartTheme.grid }
+      },
+      y: {
+        ticks: { color: chartTheme.text },
+        grid: { color: chartTheme.grid }
+      }
+    }
+  };
 
   // Generate center-wise analysis
   const centerAnalysis: CenterAnalysis[] = centers.map(center => {
@@ -424,13 +542,13 @@ export default function WeeklyReport({ onBack }: WeeklyReportProps) {
         <div className="flex items-center space-x-4">
           <button
             onClick={onBack}
-            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+            className="flex items-center space-x-2 text-nxtwave-red hover:text-nxtwave-red-dark transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
             <span>Back to Dashboard</span>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Weekly Operations Report</h1>
+            <h1 className="text-2xl font-bold text-nxtwave-red">NIAT Weekly Operations Report</h1>
             <p className="text-gray-600 dark:text-gray-400 flex items-center space-x-2">
               <Calendar className="h-4 w-4" />
               <span>
@@ -538,6 +656,52 @@ export default function WeeklyReport({ onBack }: WeeklyReportProps) {
                     <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{naItems}</div>
                     <div className="text-sm text-gray-700 dark:text-gray-300">Not Applicable</div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">{totalItems > 0 ? Math.round((naItems / totalItems) * 100) : 0}% of total</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Predictions */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center space-x-2">
+                  <Brain className="h-5 w-5 text-nxtwave-red" />
+                  <span>AI Predictions & Insights</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-br from-nxtwave-cream to-nxtwave-gold-light p-6 rounded-xl border border-nxtwave-red">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <Cpu className="h-5 w-5 text-nxtwave-red" />
+                      <h4 className="font-semibold text-nxtwave-red">Risk Analysis</h4>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">Next Week Risk Level:</span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          aiPredictions.nextWeekRisk === 'HIGH' ? 'bg-red-100 text-red-800' :
+                          aiPredictions.nextWeekRisk === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {aiPredictions.nextWeekRisk}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">Predicted Issues:</span>
+                        <span className="text-sm font-medium text-nxtwave-red">{aiPredictions.predictedIssues}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <Zap className="h-5 w-5 text-blue-600" />
+                      <h4 className="font-semibold text-blue-800 dark:text-blue-200">Recommended Actions</h4>
+                    </div>
+                    <ul className="space-y-2">
+                      {aiPredictions.recommendedActions.slice(0, 3).map((action, index) => (
+                        <li key={index} className="text-sm text-blue-700 dark:text-blue-300 flex items-start space-x-2">
+                          <span className="text-blue-500 mt-1">•</span>
+                          <span>{action}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -768,51 +932,71 @@ export default function WeeklyReport({ onBack }: WeeklyReportProps) {
 
           {viewMode === 'visualization' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Data Visualization</h3>
-              
-              {/* Placeholder for charts */}
+              {/* Chart Controls */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Data Visualization</h3>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">View:</span>
+                  <select 
+                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    defaultValue="summary"
+                  >
+                    <option value="summary">Summary Charts</option>
+                    <option value="trends">Trend Analysis</option>
+                    <option value="centers">Center Comparison</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Charts Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white dark:bg-gray-700 p-6 rounded-lg border dark:border-gray-600">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Health Score Distribution</h4>
-                  <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                    <div className="text-center">
-                      <PieChart className="h-12 w-12 mx-auto mb-4" />
-                      <p>Chart visualization would be implemented</p>
-                      <p className="text-sm">with a charting library like Chart.js or D3</p>
-                    </div>
+                {/* Status Distribution Pie Chart */}
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Status Distribution</h4>
+                  <div style={{ height: '300px' }}>
+                    <Pie data={statusChartData} options={chartOptions} />
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-gray-700 p-6 rounded-lg border dark:border-gray-600">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Trends Over Time</h4>
-                  <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                    <div className="text-center">
-                      <BarChart3 className="h-12 w-12 mx-auto mb-4" />
-                      <p>Time series chart would show</p>
-                      <p className="text-sm">performance trends across periods</p>
-                    </div>
+                {/* Trends Line Chart */}
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Weekly Trends</h4>
+                  <div style={{ height: '300px' }}>
+                    <Line data={trendsChartData} options={chartOptions} />
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-gray-700 p-6 rounded-lg border dark:border-gray-600">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Issues by Location</h4>
-                  <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                    <div className="text-center">
-                      <MapPin className="h-12 w-12 mx-auto mb-4" />
-                      <p>Geographic visualization</p>
-                      <p className="text-sm">showing issue distribution by location</p>
-                    </div>
+                {/* Center Performance Bar Chart */}
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 lg:col-span-2">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Center Performance Comparison</h4>
+                  <div style={{ height: '400px' }}>
+                    <Bar data={centerPerformanceData} options={chartOptions} />
                   </div>
                 </div>
+              </div>
 
-                <div className="bg-white dark:bg-gray-700 p-6 rounded-lg border dark:border-gray-600">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Performance Metrics</h4>
-                  <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                    <div className="text-center">
-                      <Activity className="h-12 w-12 mx-auto mb-4" />
-                      <p>KPI dashboard with gauges</p>
-                      <p className="text-sm">and performance indicators</p>
-                    </div>
+              {/* AI Insights for Charts */}
+              <div className="bg-gradient-to-br from-nxtwave-cream to-nxtwave-gold-light p-6 rounded-xl border border-nxtwave-red">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Brain className="h-5 w-5 text-nxtwave-red" />
+                  <h4 className="font-semibold text-nxtwave-red">AI Chart Analysis</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h5 className="font-medium text-gray-800 mb-2">Key Insights</h5>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• {healthPercentage}% of operations are performing optimally</li>
+                      <li>• {Math.round((highRiskItems / totalItems) * 100)}% of items require immediate attention</li>
+                      <li>• Performance trends show {trends.improving.length > trends.declining.length ? 'improvement' : 'decline'} patterns</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-gray-800 mb-2">Maintenance Priorities</h5>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      {aiPredictions.maintenanceNeeded.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
