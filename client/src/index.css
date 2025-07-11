@@ -23,26 +23,26 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-maroon-300 rounded-full;
+    @apply bg-nxtwave-red rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-maroon-400;
+    @apply bg-nxtwave-red-dark;
   }
 }
 
 @layer components {
   /* Enhanced button styles */
   .btn-primary {
-    @apply bg-maroon-600 text-white px-4 py-2 rounded-lg hover:bg-maroon-700 focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-maroon;
+    @apply bg-nxtwave-red text-white px-4 py-2 rounded-lg hover:bg-nxtwave-red-dark focus:ring-2 focus:ring-nxtwave-red-light focus:ring-offset-2 transition-all duration-200 font-medium shadow-nxtwave;
   }
   
   .btn-secondary {
-    @apply bg-cream-100 text-maroon-800 px-4 py-2 rounded-lg hover:bg-cream-200 focus:ring-2 focus:ring-cream-500 focus:ring-offset-2 transition-all duration-200 font-medium;
+    @apply bg-nxtwave-cream text-nxtwave-red px-4 py-2 rounded-lg hover:bg-nxtwave-cream-dark focus:ring-2 focus:ring-nxtwave-gold focus:ring-offset-2 transition-all duration-200 font-medium;
   }
   
   .btn-outline {
-    @apply border-2 border-maroon-600 text-maroon-600 px-4 py-2 rounded-lg hover:bg-maroon-600 hover:text-white focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 transition-all duration-200 font-medium;
+    @apply border-2 border-nxtwave-red text-nxtwave-red px-4 py-2 rounded-lg hover:bg-nxtwave-red hover:text-white focus:ring-2 focus:ring-nxtwave-red-light focus:ring-offset-2 transition-all duration-200 font-medium;
   }
   
   /* Enhanced card styles */
@@ -54,13 +54,13 @@
     @apply hover:shadow-soft-lg hover:-translate-y-1;
   }
   
-  .card-maroon {
-    @apply bg-gradient-to-br from-maroon-50 to-cream-50 border-maroon-200;
+  .card-nxtwave {
+    @apply bg-gradient-to-br from-nxtwave-cream to-nxtwave-gold-light border-nxtwave-red;
   }
   
   /* Enhanced input styles */
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all duration-200;
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-nxtwave-red focus:border-transparent transition-all duration-200;
   }
   
   /* Status indicators */
@@ -221,7 +221,37 @@
   
   /* Focus styles */
   .focus-ring {
-    @apply focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 focus:outline-none;
+    @apply focus:ring-2 focus:ring-nxtwave-red focus:ring-offset-2 focus:outline-none;
+  }
+  
+  /* NxtWave Logo and Navigation Styles */
+  .logo-container {
+    @apply flex items-center space-x-3;
+  }
+  
+  .niat-logo {
+    @apply h-10 w-auto;
+  }
+  
+  .logo-text {
+    @apply text-nxtwave-cream font-semibold text-lg;
+  }
+  
+  .nav-link {
+    @apply flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 font-medium;
+  }
+  
+  .nav-link-active {
+    @apply bg-nxtwave-cream text-nxtwave-red;
+  }
+  
+  .nav-link-inactive {
+    @apply text-nxtwave-cream hover:bg-nxtwave-red-dark hover:text-white;
+  }
+  
+  /* Loading spinner */
+  .loading-spinner {
+    @apply border-4 border-nxtwave-cream border-t-nxtwave-red rounded-full animate-spin;
   }
   
   /* Brand colors */

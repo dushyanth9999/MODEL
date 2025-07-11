@@ -7,6 +7,7 @@ This is a full-stack operations management dashboard built with React (TypeScrip
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+NxtWave branding theme: Red primary color (#b91c1c) with cream accents (#f7f3d0) and gold highlights (#d4af37).
 
 ## Recent Changes
 
@@ -146,3 +147,13 @@ Comprehensive enhancement plan provided focusing on:
 - **Build Output**: Optimized bundles with tree-shaking
 
 The application follows a monorepo structure with shared TypeScript types and schemas, enabling type safety across the full stack while maintaining clear separation of concerns between frontend and backend code.
+
+## Recent Changes
+
+### NxtWave Branding Implementation (July 11, 2025)
+- Added NxtWave Institute logo and color scheme
+- Updated Tailwind configuration with custom NxtWave colors
+- Implemented red navigation bar with cream text
+- Added branded loading spinner and styling
+- Created custom CSS classes for consistent branding
+- Successfully migrated from Bolt to Replit environment

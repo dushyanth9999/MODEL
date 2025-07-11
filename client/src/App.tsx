@@ -58,11 +58,11 @@ function AppContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-nxtwave-cream flex items-center justify-center">
         <div className="text-center">
           <img src="/logo-niat.png" alt="NxtWave Institute" className="h-16 w-auto mx-auto mb-4" />
           <div className="loading-spinner h-8 w-8 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading NxtWave Operations Dashboard...</p>
+          <p className="text-nxtwave-red font-medium">Loading NxtWave Operations Dashboard...</p>
         </div>
       </div>
     );
@@ -110,9 +110,9 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 transition-colors">
+    <div className="min-h-screen bg-nxtwave-cream transition-colors">
       {/* Enhanced Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200 transition-colors">
+      <nav className="bg-nxtwave-red shadow-sm border-b border-nxtwave-red-dark transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
