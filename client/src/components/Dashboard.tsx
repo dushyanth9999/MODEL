@@ -130,7 +130,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
       {/* Enhanced Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Operations Dashboard</h1>
+          <h1 className="text-3xl font-bold text-red-700 dark:text-red-400">NIAT Operations Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400 flex items-center space-x-2 mt-1">
             <Activity className="h-4 w-4" />
             <span>Real-time operations overview across all centers</span>
@@ -143,28 +143,28 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2 disabled:opacity-50"
+            className="btn-primary flex items-center space-x-2 px-4 py-2 disabled:opacity-50 transition-colors"
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
           <button
             onClick={exportDashboardData}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+            className="btn-secondary flex items-center space-x-2 px-4 py-2 transition-colors"
           >
             <Download className="h-4 w-4" />
             <span>Export</span>
           </button>
           <button
             onClick={() => onViewModeChange('daily-form')}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+            className="btn-outline flex items-center space-x-2 px-4 py-2 transition-colors"
           >
             <Calendar className="h-4 w-4" />
             <span>Submit Report</span>
           </button>
           <button
             onClick={() => onViewModeChange('weekly-report')}
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
+            className="btn-outline flex items-center space-x-2 px-4 py-2 transition-colors"
           >
             <BarChart3 className="h-4 w-4" />
             <span>Weekly Analysis</span>

@@ -32,17 +32,17 @@
 }
 
 @layer components {
-  /* Enhanced button styles */
+  /* NIAT branded button styles */
   .btn-primary {
-    @apply bg-nxtwave-red text-white px-4 py-2 rounded-lg hover:bg-nxtwave-red-dark focus:ring-2 focus:ring-nxtwave-red-light focus:ring-offset-2 transition-all duration-200 font-medium shadow-nxtwave;
+    @apply bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg;
   }
   
   .btn-secondary {
-    @apply bg-nxtwave-cream text-nxtwave-red px-4 py-2 rounded-lg hover:bg-nxtwave-cream-dark focus:ring-2 focus:ring-nxtwave-gold focus:ring-offset-2 transition-all duration-200 font-medium;
+    @apply bg-amber-50 text-red-700 px-4 py-2 rounded-lg hover:bg-amber-100 focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 transition-all duration-200 font-medium border border-red-200;
   }
   
   .btn-outline {
-    @apply border-2 border-nxtwave-red text-nxtwave-red px-4 py-2 rounded-lg hover:bg-nxtwave-red hover:text-white focus:ring-2 focus:ring-nxtwave-red-light focus:ring-offset-2 transition-all duration-200 font-medium;
+    @apply border-2 border-red-700 text-red-700 px-4 py-2 rounded-lg hover:bg-red-700 hover:text-white focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 font-medium;
   }
   
   /* Enhanced card styles */
@@ -60,7 +60,7 @@
   
   /* Enhanced input styles */
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-nxtwave-red focus:border-transparent transition-all duration-200;
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200;
   }
   
   /* Status indicators */
