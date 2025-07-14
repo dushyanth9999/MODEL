@@ -129,15 +129,25 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
     <div className="space-y-6">
       {/* Enhanced Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-red-700 dark:text-red-400">Ops Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400 flex items-center space-x-2 mt-1">
-            <Activity className="h-4 w-4" />
-            <span>Real-time operations overview across all centers</span>
-            <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded-full">
-              Live
-            </span>
-          </p>
+        <div className="flex items-center space-x-4">
+          <img 
+            src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
+            alt="NIAT Logo" 
+            className="h-12 w-12 rounded-lg shadow-sm"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <div>
+            <h1 className="text-3xl font-bold text-red-700 dark:text-red-400">Ops Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-400 flex items-center space-x-2 mt-1">
+              <Activity className="h-4 w-4" />
+              <span>Real-time operations overview across all centers</span>
+              <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded-full">
+                Live
+              </span>
+            </p>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
