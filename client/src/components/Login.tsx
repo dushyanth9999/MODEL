@@ -34,9 +34,9 @@ export default function Login() {
           <div className="flex justify-center">
             <div className="flex items-center space-x-3">
               <img 
-                src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
+                src="/api/assets/attached_assets/LOGIO_1752487117783.jpg?v=2" 
                 alt="NIAT Logo" 
-                className="h-16 w-auto"
+                className="h-16 w-auto rounded-lg"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   e.currentTarget.nextElementSibling?.classList.remove('hidden');

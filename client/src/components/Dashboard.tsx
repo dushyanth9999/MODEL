@@ -131,7 +131,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
           <img 
-            src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
+            src="/api/assets/attached_assets/LOGIO_1752487117783.jpg?v=2" 
             alt="NIAT Logo" 
             className="h-12 w-12 rounded-lg shadow-sm"
             onError={(e) => {

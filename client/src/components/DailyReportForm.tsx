@@ -151,8 +151,8 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
       onClick={onClick}
       className={`flex items-center space-x-1 px-3 py-1 rounded-md text-xs font-medium transition-colors
         ${currentStatus === status 
-          ? `bg-${color}-100 text-${color}-800 border border-${color}-200` 
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+          ? `bg-${color}-100 dark:bg-${color}-900 text-${color}-800 dark:text-${color}-200 border border-${color}-200 dark:border-${color}-700` 
+          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
     >
       <Icon className="h-3 w-3" />
       <span>{label}</span>
@@ -165,18 +165,18 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
       <div className="flex items-center space-x-4">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+          className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
           <span>Back to Dashboard</span>
         </button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">Daily Operations Report</h1>
-          <p className="text-gray-600">Submit daily operational status for your center</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daily Operations Report</h1>
+          <p className="text-gray-600 dark:text-gray-400">Submit daily operational status for your center</p>
         </div>
         <button
           onClick={handleSubmit}
-          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+          className="btn-primary px-6 py-2 rounded-lg transition-colors flex items-center space-x-2"
         >
           <Save className="h-4 w-4" />
           <span>Submit Report</span>
@@ -184,12 +184,12 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
       </div>
 
       {/* Center Selection */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="font-semibold text-gray-900 mb-4">Select Center</h3>
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border dark:border-gray-700">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Select Center</h3>
         <select
           value={selectedCenter}
           onChange={(e) => setSelectedCenter(e.target.value)}
-          className="w-full max-w-md p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full max-w-md p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         >
           {centers.map(center => (
             <option key={center.id} value={center.id}>
@@ -200,12 +200,12 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
         {center && (
           <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-600">COO:</span>
-              <span className="ml-2 font-medium">{center.coo}</span>
+              <span className="text-gray-600 dark:text-gray-400">CSO:</span>
+              <span className="ml-2 font-medium text-gray-900 dark:text-white">{center.cso}</span>
             </div>
             <div>
-              <span className="text-gray-600">PM:</span>
-              <span className="ml-2 font-medium">{center.pm}</span>
+              <span className="text-gray-600 dark:text-gray-400">PM:</span>
+              <span className="ml-2 font-medium text-gray-900 dark:text-white">{center.pm}</span>
             </div>
           </div>
         )}
@@ -214,14 +214,14 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
       {/* Report Categories */}
       <div className="space-y-6">
         {reportCategories.map((category, categoryIndex) => (
-          <div key={category.name} className="bg-white rounded-lg shadow-sm border">
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+          <div key={category.name} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{category.name}</h3>
             </div>
             <div className="p-6 space-y-6">
               {category.subcategories.map((subcategory, subcategoryIndex) => (
                 <div key={subcategory.name}>
-                  <h4 className="font-medium text-gray-800 mb-3">{subcategory.name}</h4>
+                  <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-3">{subcategory.name}</h4>
                   <div className="space-y-3">
                     {subcategory.items.map((item, itemIndex) => {
                       const currentStatus = getItemStatus(categoryIndex, subcategoryIndex, itemIndex);
@@ -229,9 +229,9 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                       const itemId = `${selectedCenter}-${categoryIndex}-${subcategoryIndex}-${itemIndex}`;
 
                       return (
-                        <div key={item} className="flex items-start space-x-4 p-3 bg-gray-50 rounded-lg">
+                        <div key={item} className="flex items-start space-x-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">{item}</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">{item}</p>
                             <div className="flex space-x-2 mt-2">
                               <StatusButton
                                 status="OK"
@@ -271,7 +271,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                                 placeholder="Enter remarks about this issue..."
                                 value={currentRemarks}
                                 onChange={(e) => handleRemarksChange(itemId, e.target.value)}
-                                className="mt-2 w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="mt-2 w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-sm focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                                 rows={2}
                               />
                             )}
@@ -288,8 +288,8 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
       </div>
 
       {/* Photo Upload Section */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold text-red-700 mb-6 flex items-center">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border dark:border-gray-700">
+        <h3 className="text-lg font-semibold text-red-700 dark:text-red-400 mb-6 flex items-center">
           <Camera className="h-5 w-5 mr-2" />
           Location Photos
         </h3>
@@ -306,7 +306,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
               className="hidden"
             />
           </label>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
             Upload photos of your location, issues, or progress updates
           </p>
         </div>
@@ -314,7 +314,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
         {photos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {photos.map((photo) => (
-              <div key={photo.id} className="relative bg-gray-50 rounded-lg p-4 border">
+              <div key={photo.id} className="relative bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-600">
                 <div className="relative mb-3">
                   <img
                     src={photo.preview}
@@ -331,7 +331,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                 
                 <div className="space-y-2">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                       <MapPin className="h-3 w-3 inline mr-1" />
                       Location
                     </label>
@@ -339,19 +339,19 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                       type="text"
                       value={photo.location}
                       onChange={(e) => updatePhoto(photo.id, { location: e.target.value })}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                       placeholder="e.g., Main Hall, Library, etc."
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Description
                     </label>
                     <textarea
                       value={photo.description}
                       onChange={(e) => updatePhoto(photo.id, { description: e.target.value })}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                       rows={2}
                       placeholder="Describe what this photo shows..."
                     />
@@ -364,65 +364,65 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
       </div>
 
       {/* Summary Section */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold text-red-700 mb-6">Daily Summary</h3>
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border dark:border-gray-700">
+        <h3 className="text-lg font-semibold text-red-700 dark:text-red-400 mb-6">Daily Summary</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What's going good today?
             </label>
             <textarea
               value={summary.goingGood}
               onChange={(e) => setSummary(prev => ({ ...prev, goingGood: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               rows={3}
               placeholder="List positive highlights..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What's going wrong?
             </label>
             <textarea
               value={summary.goingWrong}
               onChange={(e) => setSummary(prev => ({ ...prev, goingWrong: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               rows={3}
               placeholder="List issues and challenges..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What's at high risk?
             </label>
             <textarea
               value={summary.highRisk}
               onChange={(e) => setSummary(prev => ({ ...prev, highRisk: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               rows={3}
               placeholder="List high-risk items..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What needs immediate attention?
             </label>
             <textarea
               value={summary.immediateAttention}
               onChange={(e) => setSummary(prev => ({ ...prev, immediateAttention: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               rows={3}
               placeholder="List urgent action items..."
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Progress from last day
             </label>
             <textarea
               value={summary.progressFromLastDay}
               onChange={(e) => setSummary(prev => ({ ...prev, progressFromLastDay: e.target.value }))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               rows={3}
               placeholder="Describe improvements and progress made..."
             />

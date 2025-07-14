@@ -63,9 +63,9 @@ function AppContent() {
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-red-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <img 
-            src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
+            src="/api/assets/attached_assets/LOGIO_1752487117783.jpg?v=2" 
             alt="NIAT Logo" 
-            className="h-16 w-auto mx-auto mb-4"
+            className="h-16 w-auto mx-auto mb-4 rounded-lg"
             onError={(e) => {
               e.currentTarget.style.display = 'none';
             }}
@@ -120,9 +120,9 @@ function AppContent() {
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
+                  src="/api/assets/attached_assets/LOGIO_1752487117783.jpg?v=2" 
                   alt="NIAT Logo" 
-                  className="h-10 w-auto"
+                  className="h-10 w-auto rounded-sm"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
