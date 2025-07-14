@@ -63,7 +63,7 @@ function AppContent() {
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-red-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <img 
-            src="/api/assets/attached_assets/LOGIO_1752476483958.png" 
+            src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
             alt="NIAT Logo" 
             className="h-16 w-auto mx-auto mb-4"
             onError={(e) => {
@@ -120,7 +120,7 @@ function AppContent() {
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/api/assets/attached_assets/LOGIO_1752476483958.png" 
+                  src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
                   alt="NIAT Logo" 
                   className="h-10 w-auto"
                   onError={(e) => {

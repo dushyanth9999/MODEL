@@ -158,7 +158,7 @@ The application follows a monorepo structure with shared TypeScript types and sc
 ## Recent Changes
 
 ### NIAT Branding & Feature Enhancement (July 14, 2025)
-- Updated to new NIAT logo (LOGIO_1752476483958.png) across all pages
+- Updated to new NIAT logo (LOGIO_1752487117783.jpg) across all pages including dashboard header
 - Changed application title from "NIAT Operations Dashboard" to "Ops Dashboard"
 - Removed Budget Forecast functionality from analytics as requested
 - Added comprehensive photo upload functionality to daily reports:
@@ -169,6 +169,7 @@ The application follows a monorepo structure with shared TypeScript types and sc
 - Cleaned up redundant information in analytics displays
 - Updated analytics grid layout from 4 columns to 3 columns after removing budget forecast
 - Applied consistent NIAT red (#b91c1c) and cream (#f7f3d0) color scheme throughout
+- Added NIAT logo to dashboard header with proper spacing and styling
 
 ### Data Visualization & AI Enhancement (July 11, 2025)
 - Added comprehensive data visualization to Weekly Reports with Chart.js integration

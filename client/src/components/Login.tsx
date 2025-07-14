@@ -34,7 +34,7 @@ export default function Login() {
           <div className="flex justify-center">
             <div className="flex items-center space-x-3">
               <img 
-                src="/api/assets/attached_assets/LOGIO_1752476483958.png" 
+                src="/api/assets/attached_assets/LOGIO_1752487117783.jpg" 
                 alt="NIAT Logo" 
                 className="h-16 w-auto"
                 onError={(e) => {
