@@ -34,7 +34,7 @@ export default function Login() {
           <div className="flex justify-center">
             <div className="flex items-center space-x-3">
               <img 
-                src="/api/assets/attached_assets/logo-niat_1752305859214.png" 
+                src="/api/assets/attached_assets/LOGIO_1752476483958.png" 
                 alt="NIAT Logo" 
                 className="h-16 w-auto"
                 onError={(e) => {
@@ -46,7 +46,7 @@ export default function Login() {
             </div>
           </div>
           <h1 className="mt-6 text-center text-3xl font-extrabold text-red-700">
-            NIAT Operations Dashboard
+            Ops Dashboard
           </h1>
           <h2 className="mt-2 text-center text-xl font-semibold text-gray-900 dark:text-white">
             Sign in to your account

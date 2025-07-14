@@ -130,7 +130,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
       {/* Enhanced Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-red-700 dark:text-red-400">NIAT Operations Dashboard</h1>
+          <h1 className="text-3xl font-bold text-red-700 dark:text-red-400">Ops Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400 flex items-center space-x-2 mt-1">
             <Activity className="h-4 w-4" />
             <span>Real-time operations overview across all centers</span>

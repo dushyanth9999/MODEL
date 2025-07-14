@@ -63,7 +63,7 @@ function AppContent() {
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-red-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <img 
-            src="/api/assets/attached_assets/logo-niat_1752305859214.png" 
+            src="/api/assets/attached_assets/LOGIO_1752476483958.png" 
             alt="NIAT Logo" 
             className="h-16 w-auto mx-auto mb-4"
             onError={(e) => {
@@ -103,14 +103,7 @@ function AppContent() {
             <p className="text-gray-500">Access denied. Admin privileges required.</p>
           </div>
         );
-      case 'file-upload':
-        return canSubmitReports ? (
-          <FileUpload onBack={handleBackToDashboard} />
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Access denied. You don't have permission to upload files.</p>
-          </div>
-        );
+
       case 'analytics':
         return <AdvancedAnalytics onBack={handleBackToDashboard} />;
       default:
@@ -127,7 +120,7 @@ function AppContent() {
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/api/assets/attached_assets/logo-niat_1752305859214.png" 
+                  src="/api/assets/attached_assets/LOGIO_1752476483958.png" 
                   alt="NIAT Logo" 
                   className="h-10 w-auto"
                   onError={(e) => {
@@ -136,7 +129,7 @@ function AppContent() {
                   }}
                 />
                 <Building2 className="h-8 w-8 text-amber-100 hidden" />
-                <span className="text-xl font-bold text-amber-100">NIAT Operations Dashboard</span>
+                <span className="text-xl font-bold text-amber-100">Ops Dashboard</span>
               </div>
               <div className="hidden md:flex space-x-6">
                 <button
@@ -163,17 +156,7 @@ function AppContent() {
                       <FileText className="h-4 w-4" />
                       <span>Daily Report</span>
                     </button>
-                    <button
-                      onClick={() => handleViewModeChange('file-upload')}
-                      className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        viewMode === 'file-upload' 
-                          ? 'bg-red-800 text-white' 
-                          : 'text-amber-100 hover:text-white hover:bg-red-800'
-                      }`}
-                    >
-                      <Upload className="h-4 w-4" />
-                      <span>Upload Reports</span>
-                    </button>
+
                   </>
                 )}
                 <button

@@ -186,7 +186,6 @@ export interface Analytics {
   predictions: {
     nextWeekIssues: number;
     maintenanceNeeded: string[];
-    budgetForecast: number;
     riskAreas: string[];
   };
   benchmarks: {

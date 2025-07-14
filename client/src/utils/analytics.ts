@@ -59,7 +59,6 @@ export class AnalyticsService {
     return {
       nextWeekIssues: Math.ceil(avgIssues * 1.1), // 10% increase prediction
       maintenanceNeeded: uniqueMaintenanceItems.slice(0, 5),
-      budgetForecast: avgIssues * 500, // Estimated cost per issue
       riskAreas: this.identifyRiskAreas(recentReports)
     };
   }

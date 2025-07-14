@@ -401,16 +401,11 @@ export default function AdvancedAnalytics({ onBack }: AdvancedAnalyticsProps) {
                   <h3 className="text-lg font-semibold text-gray-900">AI Predictions</h3>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="bg-white p-4 rounded-lg border">
                     <div className="text-2xl font-bold text-blue-600">{analytics.predictions.nextWeekIssues}</div>
                     <div className="text-sm text-gray-600">Predicted Issues</div>
                     <div className="text-xs text-gray-500 mt-1">Next week</div>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg border">
-                    <div className="text-2xl font-bold text-green-600">{analytics.predictions.budgetForecast.toLocaleString()}</div>
-                    <div className="text-sm text-gray-600">Budget Forecast</div>
-                    <div className="text-xs text-gray-500 mt-1">Maintenance costs (analysis based)</div>
                   </div>
                   <div className="bg-white p-4 rounded-lg border">
                     <div className="text-2xl font-bold text-orange-600">{analytics.predictions.riskAreas.length}</div>

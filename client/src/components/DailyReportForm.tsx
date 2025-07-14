@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X } from 'lucide-react';
 import { centers, reportCategories } from '../data/mockData';
 import { ReportItem, DailyReport } from '../types';
 
@@ -8,9 +8,18 @@ interface DailyReportFormProps {
   selectedCenterId?: string;
 }
 
+interface Photo {
+  id: string;
+  file: File;
+  preview: string;
+  location: string;
+  description: string;
+}
+
 export default function DailyReportForm({ onBack, selectedCenterId }: DailyReportFormProps) {
   const [selectedCenter, setSelectedCenter] = useState(selectedCenterId || centers[0].id);
   const [reportItems, setReportItems] = useState<ReportItem[]>([]);
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [summary, setSummary] = useState({
     goingGood: '',
     goingWrong: '',
@@ -82,11 +91,42 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
     return item?.remarks || '';
   };
 
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const newPhoto: Photo = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          file,
+          preview: e.target?.result as string,
+          location: '',
+          description: ''
+        };
+        setPhotos(prev => [...prev, newPhoto]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const updatePhoto = (photoId: string, updates: Partial<Photo>) => {
+    setPhotos(prev => prev.map(photo => 
+      photo.id === photoId ? { ...photo, ...updates } : photo
+    ));
+  };
+
+  const removePhoto = (photoId: string) => {
+    setPhotos(prev => prev.filter(photo => photo.id !== photoId));
+  };
+
   const handleSubmit = () => {
     // Here you would typically submit to your backend
     console.log('Submitting report for center:', selectedCenter);
     console.log('Report items:', reportItems);
     console.log('Summary:', summary);
+    console.log('Photos:', photos);
     
     alert('Daily report submitted successfully!');
     onBack();
@@ -247,9 +287,85 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
         ))}
       </div>
 
+      {/* Photo Upload Section */}
+      <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <h3 className="text-lg font-semibold text-red-700 mb-6 flex items-center">
+          <Camera className="h-5 w-5 mr-2" />
+          Location Photos
+        </h3>
+        
+        <div className="mb-6">
+          <label className="btn-primary cursor-pointer inline-flex items-center px-4 py-2 rounded-lg">
+            <Upload className="h-4 w-4 mr-2" />
+            Upload Photos
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+          </label>
+          <p className="text-sm text-gray-500 mt-2">
+            Upload photos of your location, issues, or progress updates
+          </p>
+        </div>
+
+        {photos.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {photos.map((photo) => (
+              <div key={photo.id} className="relative bg-gray-50 rounded-lg p-4 border">
+                <div className="relative mb-3">
+                  <img
+                    src={photo.preview}
+                    alt="Location photo"
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={() => removePhoto(photo.id)}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                
+                <div className="space-y-2">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      <MapPin className="h-3 w-3 inline mr-1" />
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      value={photo.location}
+                      onChange={(e) => updatePhoto(photo.id, { location: e.target.value })}
+                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent"
+                      placeholder="e.g., Main Hall, Library, etc."
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      value={photo.description}
+                      onChange={(e) => updatePhoto(photo.id, { description: e.target.value })}
+                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent"
+                      rows={2}
+                      placeholder="Describe what this photo shows..."
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Summary Section */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Daily Summary</h3>
+        <h3 className="text-lg font-semibold text-red-700 mb-6">Daily Summary</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

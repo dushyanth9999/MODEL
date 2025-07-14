@@ -157,12 +157,24 @@ The application follows a monorepo structure with shared TypeScript types and sc
 
 ## Recent Changes
 
+### NIAT Branding & Feature Enhancement (July 14, 2025)
+- Updated to new NIAT logo (LOGIO_1752476483958.png) across all pages
+- Changed application title from "NIAT Operations Dashboard" to "Ops Dashboard"
+- Removed Budget Forecast functionality from analytics as requested
+- Added comprehensive photo upload functionality to daily reports:
+  - Location-based photo uploads with descriptions
+  - Photo management with preview and removal capabilities
+  - Integration with existing report submission system
+- Removed Upload Reports functionality from navigation menu
+- Cleaned up redundant information in analytics displays
+- Updated analytics grid layout from 4 columns to 3 columns after removing budget forecast
+- Applied consistent NIAT red (#b91c1c) and cream (#f7f3d0) color scheme throughout
+
 ### Data Visualization & AI Enhancement (July 11, 2025)
 - Added comprehensive data visualization to Weekly Reports with Chart.js integration
 - Implemented AI predictions and insights section with NxtWave branding
 - Created interactive charts: Status Distribution (Pie), Weekly Trends (Line), Center Performance (Bar)
 - Added AI-powered risk analysis, maintenance recommendations, and trend analysis
-- Removed estimated budget references from AI predictions in budget forecast
 - Enhanced weekly report with three view modes: Overview, Detailed Analysis, and Data Visualization
 - Integrated dark theme support for all charts and visualizations
 - Applied NxtWave Institute branding throughout weekly reports
