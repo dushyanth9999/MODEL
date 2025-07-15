@@ -157,6 +157,16 @@ The application follows a monorepo structure with shared TypeScript types and sc
 
 ## Recent Changes
 
+### Bug Fixes & Optimization (July 15, 2025)
+- Fixed missing `setRemarks` state variable in DailyReportForm component
+- Optimized all text field styling for consistent dark theme support
+- Enhanced form input responsiveness with better padding and focus states
+- Improved authentication flow with proper loading states and error handling
+- Fixed centers not updating after page refresh through proper state management
+- Added comprehensive export functionality for daily reports (JSON format)
+- Applied consistent NIAT red (#b91c1c) styling across all input fields
+- Enhanced login form with improved input styling and transitions
+
 ### NIAT Branding & Feature Enhancement (July 14, 2025)
 - Updated to new NIAT logo (LOGIO_1752487117783.jpg) across all pages including dashboard header
 - Changed application title from "NIAT Operations Dashboard" to "Ops Dashboard"

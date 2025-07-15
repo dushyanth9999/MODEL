@@ -20,6 +20,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
   const [selectedCenter, setSelectedCenter] = useState(selectedCenterId || centers[0].id);
   const [isInitialized, setIsInitialized] = useState(false);
   const [reportItems, setReportItems] = useState<ReportItem[]>([]);
+  const [remarks, setRemarks] = useState<Record<string, string>>({});
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [summary, setSummary] = useState({
     goingGood: '',
