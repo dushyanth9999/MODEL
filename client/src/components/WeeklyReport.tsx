@@ -43,7 +43,7 @@ interface CenterAnalysis {
   centerId: string;
   centerName: string;
   location: string;
-  cso: string;
+  cos: string;
   pm: string;
   totalItems: number;
   okItems: number;
@@ -206,7 +206,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
       centerId: center.id,
       centerName: center.name,
       location: center.location,
-      cso: center.coo, // Changed from coo to cso
+      cos: center.cos, // Changed from coo to cos
       pm: center.pm,
       totalItems: 0,
       okItems: 0,
@@ -281,7 +281,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
     const matchesSearch = searchTerm === '' || 
       center.centerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       center.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      center.cso.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      center.cos.toLowerCase().includes(searchTerm.toLowerCase()) ||
       center.pm.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesLocation = selectedLocation === 'all' || center.location === selectedLocation;
@@ -337,14 +337,14 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
       const centerData = [
         ['Center Performance Summary'],
         [''],
-        ['Center', 'Location', 'CSO', 'PM', 'Report Status', 'Health Score', 'Issues', 'High Risk', 'Last Updated']
+        ['Center', 'Location', 'COS', 'PM', 'Report Status', 'Health Score', 'Issues', 'High Risk', 'Last Updated']
       ];
 
       centerAnalysis.forEach(center => {
         centerData.push([
           center.centerName,
           center.location,
-          center.cso,
+          center.cos,
           center.pm,
           center.reportSubmitted ? 'Submitted' : 'Pending',
           center.reportSubmitted ? `${center.healthScore}%` : 'N/A',
@@ -445,8 +445,8 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
               <h4 className="font-medium text-gray-900 dark:text-white mb-3">Team Information</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Chief Staff Officer:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{center.cso}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Chief of Staff:</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{center.cos}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Project Manager:</span>
@@ -830,8 +830,8 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
 
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">CSO:</span>
-                              <span className="font-medium text-gray-900 dark:text-white">{center.cso}</span>
+                              <span className="text-gray-600 dark:text-gray-400">COS:</span>
+                              <span className="font-medium text-gray-900 dark:text-white">{center.cos}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-600 dark:text-gray-400">PM:</span>

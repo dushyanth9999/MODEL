@@ -1,24 +1,24 @@
 import { Center, DailyReport, ReportItem } from '../types';
 
 export const centers: Center[] = [
-  { id: '1', name: 'Annamacharya University', location: 'Rajampet', cso: 'Shivaram Pranay', pm: '' },
-  { id: '2', name: 'Chalapathi Institute of Technology', location: 'Guntur', cso: 'Arlaiah', pm: '' },
-  { id: '3', name: 'Chalapathi Institute of Engineering & Technology', location: 'Guntur', cso: 'Arlaiah', pm: '' },
-  { id: '4', name: 'NRI', location: 'Vijayawada', cso: 'Manoj', pm: '' },
-  { id: '5', name: 'NSRIT', location: 'Vizag', cso: 'Satya', pm: '' },
-  { id: '6', name: 'Aurora Deemed University', location: 'Hyderabad', cso: 'Shadeep', pm: '' },
-  { id: '7', name: 'Malla Reddy University', location: 'Hyderabad', cso: 'Manideep Reddy Irupaka', pm: '' },
-  { id: '8', name: 'Chaitanya Deemed University (CDU)', location: 'Hyderabad', cso: 'Shanthan Singam', pm: '' },
-  { id: '9', name: 'Takshashila University', location: 'Pondicherry', cso: 'Ashwath', pm: '' },
-  { id: '10', name: 'Crescent University', location: 'Chennai', cso: 'Krishnaja', pm: '' },
-  { id: '11', name: 'AMET University', location: 'Chennai', cso: 'Harishma cs', pm: '' },
-  { id: '12', name: 'Sharda University', location: 'Noida', cso: 'Manoj Machineni', pm: '' },
-  { id: '13', name: 'Noida International University', location: 'Noida', cso: 'Gaurav Singh', pm: '' },
-  { id: '14', name: 'Ajeenkya D.Y. Patil University', location: 'Pune', cso: 'Kavya Achar', pm: '' },
-  { id: '15', name: 'Sanjay Ghodawat University', location: 'Kolhapur', cso: 'Vijay', pm: '' },
-  { id: '16', name: 'S-Vyasa', location: 'Bengaluru', cso: 'Varsha Mahesh', pm: '' },
-  { id: '17', name: 'Yenepoya University', location: 'Mangalore', cso: 'Nawaz', pm: '' },
-  { id: '18', name: 'Vivekananda Global University', location: 'Jaipur', cso: 'Jatin', pm: '' },
+  { id: '1', name: 'Annamacharya University', location: 'Rajampet', cos: 'Shivaram Pranay', pm: '' },
+  { id: '2', name: 'Chalapathi Institute of Technology', location: 'Guntur', cos: 'Arlaiah', pm: '' },
+  { id: '3', name: 'Chalapathi Institute of Engineering & Technology', location: 'Guntur', cos: 'Arlaiah', pm: '' },
+  { id: '4', name: 'NRI', location: 'Vijayawada', cos: 'Manoj', pm: '' },
+  { id: '5', name: 'NSRIT', location: 'Vizag', cos: 'Satya', pm: '' },
+  { id: '6', name: 'Aurora Deemed University', location: 'Hyderabad', cos: 'Shadeep', pm: '' },
+  { id: '7', name: 'Malla Reddy University', location: 'Hyderabad', cos: 'Manideep Reddy Irupaka', pm: '' },
+  { id: '8', name: 'Chaitanya Deemed University (CDU)', location: 'Hyderabad', cos: 'Shanthan Singam', pm: '' },
+  { id: '9', name: 'Takshashila University', location: 'Pondicherry', cos: 'Ashwath', pm: '' },
+  { id: '10', name: 'Crescent University', location: 'Chennai', cos: 'Krishnaja', pm: '' },
+  { id: '11', name: 'AMET University', location: 'Chennai', cos: 'Harishma cs', pm: '' },
+  { id: '12', name: 'Sharda University', location: 'Noida', cos: 'Manoj Machineni', pm: '' },
+  { id: '13', name: 'Noida International University', location: 'Noida', cos: 'Gaurav Singh', pm: '' },
+  { id: '14', name: 'Ajeenkya D.Y. Patil University', location: 'Pune', cos: 'Kavya Achar', pm: '' },
+  { id: '15', name: 'Sanjay Ghodawat University', location: 'Kolhapur', cos: 'Vijay', pm: '' },
+  { id: '16', name: 'S-Vyasa', location: 'Bengaluru', cos: 'Varsha Mahesh', pm: '' },
+  { id: '17', name: 'Yenepoya University', location: 'Mangalore', cos: 'Nawaz', pm: '' },
+  { id: '18', name: 'Vivekananda Global University', location: 'Jaipur', cos: 'Jatin', pm: '' },
 ];
 
 export const reportCategories = [
@@ -87,7 +87,7 @@ export const mockReports: DailyReport[] = centers.slice(0, 8).map((center, index
     immediateAttention: index % 4 === 0 ? ['Fire safety equipment check'] : [],
     progressFromLastDay: 'Improved attendance by 15%, resolved cafeteria cleaning issues'
   },
-  submittedBy: center.cso,
+  submittedBy: center.cos,
   submittedAt: new Date(),
   version: 1,
   status: 'SUBMITTED'

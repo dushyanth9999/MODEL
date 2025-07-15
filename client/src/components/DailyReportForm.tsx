@@ -271,8 +271,8 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
         {center && (
           <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-600 dark:text-gray-400">CSO:</span>
-              <span className="ml-2 font-medium text-gray-900 dark:text-white">{center.cso}</span>
+              <span className="text-gray-600 dark:text-gray-400">COS:</span>
+              <span className="ml-2 font-medium text-gray-900 dark:text-white">{center.cos}</span>
             </div>
             <div>
               <span className="text-gray-600 dark:text-gray-400">PM:</span>

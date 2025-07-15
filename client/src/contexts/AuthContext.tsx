@@ -31,7 +31,7 @@ const mockUsers: User[] = [
     id: '2',
     email: 'shivika@company.com',
     name: 'Shivika',
-    role: 'cso',
+    role: 'cos',
     centerId: '1',
     isActive: true,
     createdAt: new Date('2024-01-01')
@@ -40,7 +40,7 @@ const mockUsers: User[] = [
     id: '3',
     email: 'abhinav@company.com',
     name: 'Abhinav',
-    role: 'cso',
+    role: 'cos',
     centerId: '2',
     isActive: true,
     createdAt: new Date('2024-01-01')

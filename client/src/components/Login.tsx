@@ -134,8 +134,8 @@ export default function Login() {
             <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Demo Credentials:</h4>
             <div className="text-xs text-red-600 dark:text-red-300 space-y-1">
               <div>Admin: admin@company.com / password123</div>
-              <div>CSO: shivika@company.com / password123</div>
-              <div>CSO: abhinav@company.com / password123</div>
+              <div>COS: shivika@company.com / password123</div>
+              <div>COS: abhinav@company.com / password123</div>
             </div>
           </div>
         </form>

@@ -39,7 +39,7 @@ const mockUsers: User[] = [
     id: '2',
     email: 'shivika@company.com',
     name: 'Shivika',
-    role: 'coo',
+    role: 'cos',
     centerId: '1',
     isActive: true,
     lastLogin: new Date('2024-01-15T09:15:00'),
@@ -49,7 +49,7 @@ const mockUsers: User[] = [
     id: '3',
     email: 'abhinav@company.com',
     name: 'Abhinav',
-    role: 'coo',
+    role: 'cos',
     centerId: '2',
     isActive: true,
     lastLogin: new Date('2024-01-14T16:45:00'),
@@ -98,7 +98,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
   const [newCenter, setNewCenter] = useState({
     name: '',
     location: '',
-    coo: '',
+    cos: '',
     pm: ''
   });
 
@@ -135,7 +135,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
       id: Date.now().toString(),
       name: newCenter.name,
       location: newCenter.location,
-      coo: newCenter.coo,
+      cos: newCenter.cos,
       pm: newCenter.pm
     };
 
@@ -144,7 +144,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     setNewCenter({
       name: '',
       location: '',
-      coo: '',
+      cos: '',
       pm: ''
     });
   };
@@ -167,7 +167,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     setNewCenter({
       name: center.name,
       location: center.location,
-      coo: center.coo,
+      cos: center.cos,
       pm: center.pm
     });
     setShowCenterModal(true);
@@ -204,7 +204,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
       ...editingCenter,
       name: newCenter.name,
       location: newCenter.location,
-      coo: newCenter.coo,
+      cos: newCenter.cos,
       pm: newCenter.pm
     };
 
@@ -214,7 +214,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     setNewCenter({
       name: '',
       location: '',
-      coo: '',
+      cos: '',
       pm: ''
     });
   };
@@ -242,7 +242,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
   const getRoleBadgeColor = (role: User['role']) => {
     switch (role) {
       case 'admin': return 'bg-nxtwave-red text-white';
-      case 'cso': return 'bg-nxtwave-gold text-nxtwave-red';
+      case 'cos': return 'bg-nxtwave-gold text-nxtwave-red';
       case 'pm': return 'bg-nxtwave-cream text-nxtwave-red';
       case 'viewer': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
@@ -305,12 +305,12 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
             >
               <option value="viewer">Viewer</option>
               <option value="pm">Project Manager</option>
-              <option value="coo">COO</option>
+              <option value="cos">Chief of Staff</option>
               <option value="admin">Admin</option>
             </select>
           </div>
 
-          {(newUser.role === 'coo' || newUser.role === 'pm') && (
+          {(newUser.role === 'cos' || newUser.role === 'pm') && (
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Center
@@ -432,12 +432,12 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Chief Operating Officer (COO)
+              Chief of Staff (COS)
             </label>
             <input
               type="text"
-              value={newCenter.coo}
-              onChange={(e) => setNewCenter({ ...newCenter, coo: e.target.value })}
+              value={newCenter.cos}
+              onChange={(e) => setNewCenter({ ...newCenter, cos: e.target.value })}
               className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="e.g., Shivika"
               required
@@ -670,8 +670,8 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
                     
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">COO:</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{center.coo}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">COS:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{center.cos}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600 dark:text-gray-400">PM:</span>

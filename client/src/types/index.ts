@@ -2,7 +2,7 @@ export interface Center {
   id: string;
   name: string;
   location: string;
-  cso: string; // Changed from coo to cso
+  cos: string; // Chief of Staff
   pm: string;
   coordinates?: {
     lat: number;
@@ -79,7 +79,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'cso' | 'pm' | 'viewer';
+  role: 'admin' | 'cos' | 'pm' | 'viewer';
   centerId?: string;
   isActive: boolean;
   lastLogin?: Date;

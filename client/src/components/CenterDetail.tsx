@@ -97,8 +97,8 @@ export default function CenterDetail({ centerId, onBack }: CenterDetailProps) {
           <div className="flex items-center space-x-3">
             <User className="h-5 w-5 text-gray-400" />
             <div>
-              <p className="text-sm text-gray-600">Chief Staff Officer (CSO)</p>
-              <p className="font-medium text-gray-900">{center.coo}</p>
+              <p className="text-sm text-gray-600">Chief of Staff (COS)</p>
+              <p className="font-medium text-gray-900">{center.cos}</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">

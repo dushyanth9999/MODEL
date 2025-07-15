@@ -152,7 +152,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
       const matchesSearch = searchTerm === '' || 
         center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         center.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        center.coo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        center.cos.toLowerCase().includes(searchTerm.toLowerCase()) ||
         center.pm.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesLocation = selectedLocation === 'all' || center.location === selectedLocation;
@@ -475,7 +475,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
                       )}
                       
                       <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                        <span>COO: {center?.coo}</span>
+                        <span>COS: {center?.cos}</span>
                         <span>PM: {center?.pm}</span>
                         <span>Updated: {report.submittedAt.toLocaleTimeString()}</span>
                       </div>
@@ -661,9 +661,9 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <User className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">COO:</span>
+                    <span className="text-gray-600 dark:text-gray-400">COS:</span>
                   </div>
-                  <span className="font-medium text-gray-900 dark:text-white">{center.coo}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{center.cos}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">

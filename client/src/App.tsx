@@ -56,7 +56,7 @@ function AppContent() {
   };
 
   const canAccessAdmin = user?.role === 'admin';
-  const canSubmitReports = user?.role === 'admin' || user?.role === 'cso' || user?.role === 'pm';
+  const canSubmitReports = user?.role === 'admin' || user?.role === 'cos' || user?.role === 'pm';
   const unreadCount = notifications.filter(n => !n.read).length;
 
   if (isLoading) {
@@ -238,7 +238,7 @@ function AppContent() {
                   <div className="text-sm">
                     <div className="font-medium text-amber-100">{user?.name}</div>
                     <div className="text-amber-100 opacity-75 capitalize">
-                      {user?.role === 'cso' ? 'CSO' : user?.role}
+                      {user?.role === 'cos' ? 'COS' : user?.role}
                     </div>
                   </div>
                 </div>
