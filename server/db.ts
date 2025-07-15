@@ -1,55 +1,21 @@
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from "ws";
 import * as schema from "@shared/schema";
 
-// Use SQLite for Bolt environment
-const sqlite = new Database('database.sqlite');
-export const db = drizzle(sqlite, { schema });
+neonConfig.webSocketConstructor = ws;
 
-// Initialize database tables
-try {
-  // Create tables if they don't exist
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'viewer',
-      center_id TEXT
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS action_tracker_templates (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      role TEXT NOT NULL,
-      title TEXT NOT NULL,
-      description TEXT,
-      items TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      is_active BOOLEAN DEFAULT 1
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS daily_action_trackers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      template_id INTEGER NOT NULL,
-      center_id TEXT,
-      date DATETIME NOT NULL,
-      completed_items TEXT NOT NULL DEFAULT '[]',
-      notes TEXT,
-      completed_at DATETIME,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id),
-      FOREIGN KEY (template_id) REFERENCES action_tracker_templates(id)
-    )
-  `);
-
-  console.log('✅ Database initialized successfully');
-} catch (error) {
-  console.error('❌ Database initialization error:', error);
+// Check for DATABASE_URL and provide helpful error message
+if (!process.env.DATABASE_URL) {
+  console.error("❌ DATABASE_URL environment variable is not set!");
+  console.error("📝 To fix this:");
+  console.error("   1. In Replit, click on the 'Secrets' tab (lock icon) in the sidebar");
+  console.error("   2. Add a new secret with key: DATABASE_URL");
+  console.error("   3. Set the value to your PostgreSQL connection string");
+  console.error("   4. If using Replit's built-in PostgreSQL, the connection string should be auto-provided");
+  console.error("   5. Restart the server with 'npm run dev'");
+  process.exit(1);
 }
+
+export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const db = drizzle({ client: pool, schema });

@@ -1,9 +1,9 @@
-import { sqliteTable, text, integer, blob } from "drizzle-orm/sqlite-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = sqliteTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   role: text("role").notNull().default("viewer"), // admin, cos, pm, viewer, head_of_niat
@@ -11,29 +11,29 @@ export const users = sqliteTable("users", {
 });
 
 // Action Tracker Templates
-export const actionTrackerTemplates = sqliteTable("action_tracker_templates", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const actionTrackerTemplates = pgTable("action_tracker_templates", {
+  id: serial("id").primaryKey(),
   role: text("role").notNull(), // cos, pm
   title: text("title").notNull(),
   description: text("description"),
-  items: text("items", { mode: 'json' }).notNull().$type<string[]>(),
-  createdAt: integer("created_at", { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-  isActive: integer("is_active", { mode: 'boolean' }).notNull().default(true),
+  items: jsonb("items").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  isActive: boolean("is_active").default(true),
 });
 
 // Daily Action Tracker Completions
-export const dailyActionTrackers = sqliteTable("daily_action_trackers", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  userId: integer("user_id").notNull().references(() => users.id),
-  templateId: integer("template_id").notNull().references(() => actionTrackerTemplates.id),
+export const dailyActionTrackers = pgTable("daily_action_trackers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  templateId: integer("template_id").references(() => actionTrackerTemplates.id).notNull(),
   centerId: text("center_id"),
-  date: integer("date", { mode: 'timestamp' }).notNull(),
-  completedItems: text("completed_items", { mode: 'json' }).notNull().default('[]').$type<string[]>(),
+  date: timestamp("date").notNull(),
+  completedItems: jsonb("completed_items").notNull().default([]),
   notes: text("notes"),
-  completedAt: integer("completed_at", { mode: 'timestamp' }),
-  createdAt: integer("created_at", { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
