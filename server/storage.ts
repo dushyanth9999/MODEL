@@ -473,6 +473,7 @@ export class DatabaseStorage implements IStorage {
 }
 
 // Use MemStorage temporarily until Supabase is configured
-// Temporarily back to MemStorage due to Supabase SCRAM authentication issue
-// Will switch to DatabaseStorage once connection string is corrected
+// Note: Supabase connection currently blocked by Replit network restrictions
+// DNS resolution fails for db.*.supabase.co domains in this environment
+// Using MemStorage as stable alternative for this deployment
 export const storage = new MemStorage();
