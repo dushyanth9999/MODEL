@@ -74,24 +74,8 @@ export const reportCategories = [
   }
 ];
 
-// Mock data for current reports
-export const mockReports: DailyReport[] = centers.slice(0, 8).map((center, index) => ({
-  id: `report-${center.id}`,
-  centerId: center.id,
-  date: new Date(),
-  items: generateMockReportItems(center.id),
-  summary: {
-    goingGood: ['All infrastructure working smoothly', 'High student engagement', 'Clean facilities'],
-    goingWrong: index % 3 === 0 ? ['Network connectivity issues', 'Late bus arrivals'] : [],
-    highRisk: index % 5 === 0 ? ['AC maintenance needed urgently'] : [],
-    immediateAttention: index % 4 === 0 ? ['Fire safety equipment check'] : [],
-    progressFromLastDay: 'Improved attendance by 15%, resolved cafeteria cleaning issues'
-  },
-  submittedBy: center.cos,
-  submittedAt: new Date(),
-  version: 1,
-  status: 'SUBMITTED'
-}));
+// Cleared all previous reports for fresh start
+export const mockReports: DailyReport[] = [];
 
 function generateMockReportItems(centerId: string): ReportItem[] {
   const items: ReportItem[] = [];

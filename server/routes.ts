@@ -7,8 +7,12 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Initialize database with default data
-  await storage.initialize();
+  // Initialize storage with default data
+  try {
+    await storage.initialize();
+  } catch (error) {
+    console.error('Storage initialization failed:', error);
+  }
   
   // Action Tracker Templates Routes
   app.get('/api/action-tracker-templates', async (req, res) => {

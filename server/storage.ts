@@ -43,6 +43,7 @@ export class MemStorage implements IStorage {
   currentId: number;
   currentTemplateId: number;
   currentTrackerId: number;
+  private initialized = false;
 
   constructor() {
     this.users = new Map();
@@ -55,6 +56,12 @@ export class MemStorage implements IStorage {
     // Initialize default templates and users
     this.initializeDefaultTemplates();
     this.initializeDefaultUsers();
+  }
+
+  async initialize() {
+    if (this.initialized) return;
+    console.log('✅ MemStorage initialized with default data');
+    this.initialized = true;
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -465,5 +472,5 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Use DatabaseStorage for Supabase integration
-export const storage = new DatabaseStorage();
+// Use MemStorage temporarily until Supabase is configured
+export const storage = new MemStorage();
