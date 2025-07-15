@@ -266,6 +266,103 @@ export class MemStorage implements IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  private initialized = false;
+
+  async initialize() {
+    if (this.initialized) return;
+    
+    try {
+      // Check if we have any templates, if not initialize with defaults
+      const templates = await this.getActionTrackerTemplates();
+      if (templates.length === 0) {
+        await this.initializeDefaultTemplates();
+      }
+      
+      // Check if we have any users, if not initialize with defaults
+      const users = await this.getAllUsers();
+      if (users.length === 0) {
+        await this.initializeDefaultUsers();
+      }
+      
+      this.initialized = true;
+      console.log('✅ Database initialized with default data');
+    } catch (error) {
+      console.error('❌ Error initializing database:', error);
+    }
+  }
+
+  private async initializeDefaultTemplates() {
+    const cosTemplate = {
+      role: "cos",
+      title: "Chief of Staff Daily Checklist",
+      description: "Daily operational checklist for Chief of Staff",
+      items: [
+        "Review daily campus performance reports (CSAT, attendance, budget)",
+        "Check in with 1–2 Program Managers on key priorities",
+        "Scan dashboards for red flags (e.g., churn, lagging KPIs)",
+        "Review new issues/requests from campuses",
+        "Prioritize escalations and align with leadership calendar",
+        "Lead or attend cross-functional syncs (ops, academic, tech)",
+        "Finalize strategy notes or review decks for leadership meetings",
+        "Align resource allocation decisions (budget, staffing)",
+        "Share insights or playbooks with PMs (best practices)",
+        "Advocate for campus needs in central leadership meetings",
+        "Log summary updates: performance insights, blockers, wins",
+        "Prepare updates or key messages for next day's standups"
+      ],
+      isActive: true
+    };
+
+    const pmTemplate = {
+      role: "pm",
+      title: "Program Manager Daily Checklist",
+      description: "Daily operational checklist for Program Managers",
+      items: [
+        "Conduct a daily ops standup with campus staff (15–20 mins)",
+        "Ensure all classes/events are live and running smoothly",
+        "Track attendance and resolve any student/ops issues",
+        "Check on lab/technical uptime and classroom readiness",
+        "Meet with faculty or success team on at-risk students",
+        "Coordinate ongoing events/workshops (if any)",
+        "Follow up on student engagement activities (clubs, tasks)",
+        "Liaise with placement cell/industry partners if scheduled",
+        "Submit mini status updates to CoS (Slack/email/portal)",
+        "Review CSAT/NPS feedback for the day",
+        "Evaluate team performance: log key actions and attendance",
+        "Document any operational issues or escalations",
+        "Plan and schedule improvements (labs, training, events)",
+        "Wrap-up with quick sync with senior campus team"
+      ],
+      isActive: true
+    };
+
+    await this.createActionTrackerTemplate(cosTemplate);
+    await this.createActionTrackerTemplate(pmTemplate);
+  }
+
+  private async initializeDefaultUsers() {
+    const defaultUsers = [
+      {
+        username: "admin@niat.edu",
+        role: "head_of_niat",
+        centerId: null
+      },
+      {
+        username: "cos@niat.edu",
+        role: "cos",
+        centerId: "niat-hyderabad"
+      },
+      {
+        username: "pm@niat.edu",
+        role: "pm",
+        centerId: "niat-hyderabad"
+      }
+    ];
+
+    for (const user of defaultUsers) {
+      await this.createUser(user);
+    }
+  }
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
@@ -368,5 +465,5 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Switch to MemStorage for now to avoid connection issues during migration
-export const storage = new MemStorage();
+// Use DatabaseStorage for Supabase integration
+export const storage = new DatabaseStorage();

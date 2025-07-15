@@ -1,23 +1,22 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
+import { Pool } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
 import * as schema from "@shared/schema";
-
-neonConfig.webSocketConstructor = ws;
 
 // Check for DATABASE_URL and provide helpful error message
 if (!process.env.DATABASE_URL) {
   console.error("❌ DATABASE_URL environment variable is not set!");
-  console.error("📝 To fix this:");
-  console.error("   1. In Replit, click on the 'Secrets' tab (lock icon) in the sidebar");
-  console.error("   2. Add a new secret with key: DATABASE_URL");
-  console.error("   3. Set the value to your PostgreSQL connection string");
-  console.error("   4. If using Replit's built-in PostgreSQL, the connection string should be auto-provided");
-  console.error("   5. Restart the server with 'npm run dev'");
+  console.error("📝 To set up Supabase database:");
+  console.error("   1. Go to https://supabase.com/dashboard/projects");
+  console.error("   2. Create a new project if you haven't already");
+  console.error("   3. Click the 'Connect' button on the top toolbar");
+  console.error("   4. Copy URI value under 'Connection string' -> 'Transaction pooler'");
+  console.error("   5. Replace [YOUR-PASSWORD] with your database password");
+  console.error("   6. Add it as DATABASE_URL in Replit Secrets");
+  console.error("   7. Restart the server with 'npm run dev'");
   process.exit(1);
 }
 
-// Configure connection pool with proper settings for Neon
+// Configure connection pool for Supabase
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
   max: 10,
@@ -27,11 +26,11 @@ export const pool = new Pool({
 
 // Add connection event handlers
 pool.on('connect', () => {
-  console.log('✅ Database connected successfully');
+  console.log('✅ Supabase database connected successfully');
 });
 
 pool.on('error', (err) => {
-  console.error('❌ Database connection error:', err);
+  console.error('❌ Supabase database connection error:', err);
 });
 
 export const db = drizzle({ client: pool, schema });
