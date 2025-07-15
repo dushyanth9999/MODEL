@@ -473,6 +473,6 @@ export class DatabaseStorage implements IStorage {
 }
 
 // Use MemStorage temporarily until Supabase is configured
-// Temporarily use MemStorage due to Supabase connectivity issues in Replit environment
-// Will switch to DatabaseStorage once connectivity is resolved
+// Temporarily back to MemStorage due to Supabase SCRAM authentication issue
+// Will switch to DatabaseStorage once connection string is corrected
 export const storage = new MemStorage();

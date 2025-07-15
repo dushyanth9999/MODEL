@@ -1,5 +1,5 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
 // Check for DATABASE_URL and provide helpful error message
@@ -16,9 +16,36 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-// Use HTTP connection instead of WebSocket for better Replit compatibility
-const sql = neon(process.env.DATABASE_URL);
+// Clean up malformed DATABASE_URL format
+let cleanDatabaseUrl = process.env.DATABASE_URL;
+// Fix double @ symbol issue in Supabase connection strings
+if (cleanDatabaseUrl.includes('@') && cleanDatabaseUrl.match(/@.*@/)) {
+  const parts = cleanDatabaseUrl.split('@');
+  if (parts.length === 3) {
+    // Format: postgresql://user:pass@extra@host:port/db
+    cleanDatabaseUrl = `${parts[0]}@${parts[2]}`;
+    console.log('🔧 Fixed malformed DATABASE_URL format');
+  }
+}
 
-console.log('✅ Supabase database connection configured');
+// Use standard PostgreSQL driver for better compatibility
+export const pool = new Pool({
+  connectionString: cleanDatabaseUrl,
+  ssl: {
+    rejectUnauthorized: false
+  },
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+});
 
-export const db = drizzle(sql, { schema });
+// Test connection
+pool.on('connect', () => {
+  console.log('✅ Supabase database connected successfully');
+});
+
+pool.on('error', (err) => {
+  console.error('❌ Supabase database connection error:', err.message);
+});
+
+export const db = drizzle(pool, { schema });
