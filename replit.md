@@ -159,6 +159,7 @@ The application follows a monorepo structure with shared TypeScript types and sc
 
 ### Bug Fixes & Optimization (July 15, 2025)
 - Fixed missing `setRemarks` state variable in DailyReportForm component
+- Moved Action Tracker from Weekly Report to Daily Report section as requested
 - Optimized all text field styling for consistent dark theme support
 - Enhanced form input responsiveness with better padding and focus states
 - Improved authentication flow with proper loading states and error handling

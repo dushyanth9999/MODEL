@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X, Download } from 'lucide-react';
+import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X, Download, List } from 'lucide-react';
 import { centers, reportCategories } from '../data/mockData';
 import { ReportItem, DailyReport } from '../types';
+import ActionTracker from './ActionTracker';
 
 interface DailyReportFormProps {
   onBack: () => void;
@@ -22,6 +23,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
   const [reportItems, setReportItems] = useState<ReportItem[]>([]);
   const [remarks, setRemarks] = useState<Record<string, string>>({});
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [showActionTracker, setShowActionTracker] = useState(false);
   const [summary, setSummary] = useState({
     goingGood: '',
     goingWrong: '',
@@ -228,6 +230,13 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
           <p className="text-gray-600 dark:text-gray-400">Submit daily operational status for your center</p>
         </div>
         <div className="flex space-x-2">
+          <button
+            onClick={() => setShowActionTracker(!showActionTracker)}
+            className="bg-nxtwave-red text-white px-4 py-2 rounded-lg hover:bg-nxtwave-red-dark transition-colors flex items-center space-x-2"
+          >
+            <List className="h-4 w-4" />
+            <span>Action Tracker</span>
+          </button>
           <button
             onClick={exportDailyReport}
             className="btn-secondary px-6 py-2 rounded-lg transition-colors flex items-center space-x-2"
@@ -491,6 +500,13 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
           </div>
         </div>
       </div>
+
+      {/* Action Tracker */}
+      {showActionTracker && (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border dark:border-gray-700">
+          <ActionTracker onBack={() => setShowActionTracker(false)} />
+        </div>
+      )}
     </div>
   );
 }
