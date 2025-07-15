@@ -55,8 +55,8 @@ function AppContent() {
     setSelectedCenterId('');
   };
 
-  const canAccessAdmin = user?.role === 'admin';
-  const canSubmitReports = user?.role === 'admin' || user?.role === 'cos' || user?.role === 'pm';
+  const canAccessAdmin = user?.role === 'admin' || user?.role === 'head_of_niat';
+  const canSubmitReports = user?.role === 'admin' || user?.role === 'head_of_niat' || user?.role === 'cos' || user?.role === 'pm';
   const unreadCount = notifications.filter(n => !n.read).length;
 
   if (isLoading) {

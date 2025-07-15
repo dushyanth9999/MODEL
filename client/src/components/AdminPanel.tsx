@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { User, Center } from '../types';
 import { centers as initialCenters } from '../data/mockData';
+import { getRoleDisplayName, getRoleBadgeColor } from '../utils/rbac';
 
 interface AdminPanelProps {
   onBack: () => void;
@@ -239,15 +240,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     ));
   };
 
-  const getRoleBadgeColor = (role: User['role']) => {
-    switch (role) {
-      case 'admin': return 'bg-nxtwave-red text-white';
-      case 'cos': return 'bg-nxtwave-gold text-nxtwave-red';
-      case 'pm': return 'bg-nxtwave-cream text-nxtwave-red';
-      case 'viewer': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
-    }
-  };
+  // Using imported getRoleBadgeColor function from rbac utils
 
   const UserModal = () => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -307,6 +300,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
               <option value="pm">Project Manager</option>
               <option value="cos">Chief of Staff</option>
               <option value="admin">Admin</option>
+              <option value="head_of_niat">Head of NIAT</option>
             </select>
           </div>
 
@@ -579,7 +573,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
-                              {user.role.toUpperCase()}
+                              {getRoleDisplayName(user.role)}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">

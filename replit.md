@@ -180,6 +180,16 @@ The application follows a monorepo structure with shared TypeScript types and sc
 - Applied consistent NIAT red (#b91c1c) styling across all input fields
 - Enhanced login form with improved input styling and transitions
 
+### Role-Based Access Control Enhancement (July 15, 2025)
+- Implemented comprehensive RBAC system with centralized utility functions
+- Added "head_of_niat" role with full access to all university data across all 18 centers
+- Created role-based data filtering throughout the application
+- Updated Dashboard, AdminPanel, and WeeklyReport components to respect user access permissions
+- COS and PM users now only see their assigned university data
+- Added utility functions for role display names and badge colors
+- Completed role terminology migration from "coo"/"cso" to "cos" (Chief of Staff)
+- Added proper permission checking for data access and operations
+
 ### NIAT Branding & Feature Enhancement (July 14, 2025)
 - Updated to new NIAT logo (LOGIO_1752487117783.jpg) across all pages including dashboard header
 - Changed application title from "NIAT Operations Dashboard" to "Ops Dashboard"

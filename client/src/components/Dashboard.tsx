@@ -23,6 +23,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { centers, mockReports } from '../data/mockData';
 import { DailyReport } from '../types';
+import { getUserAccessibleCenters } from '../utils/rbac';
 
 interface DashboardProps {
   onViewModeChange: (mode: string, centerId?: string) => void;
@@ -40,8 +41,12 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
   const [dailyTrackers, setDailyTrackers] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const todayReports = mockReports;
-  const totalCenters = centers.length;
+  // Filter centers based on user permissions
+  const accessibleCenters = getUserAccessibleCenters(user, centers);
+  const todayReports = mockReports.filter(report => 
+    accessibleCenters.some(center => center.id === report.centerId)
+  );
+  const totalCenters = accessibleCenters.length;
   const reportsSubmitted = todayReports.length;
   const pendingReports = totalCenters - reportsSubmitted;
 
@@ -144,10 +149,10 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
   );
 
   // Get unique locations for filter
-  const locations = [...new Set(centers.map(center => center.location))];
+  const locations = [...new Set(accessibleCenters.map(center => center.location))];
 
   // Filter and sort centers
-  const filteredCenters = centers
+  const filteredCenters = accessibleCenters
     .filter(center => {
       const matchesSearch = searchTerm === '' || 
         center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

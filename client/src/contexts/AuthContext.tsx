@@ -44,6 +44,14 @@ const mockUsers: User[] = [
     centerId: '2',
     isActive: true,
     createdAt: new Date('2024-01-01')
+  },
+  {
+    id: '4',
+    email: 'head@niat.edu',
+    name: 'Dr. Rajesh Kumar',
+    role: 'head_of_niat',
+    isActive: true,
+    createdAt: new Date('2024-01-01')
   }
 ];
 

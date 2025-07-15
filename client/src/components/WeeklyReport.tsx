@@ -27,6 +27,8 @@ import {
 } from 'lucide-react';
 import { centers, mockReports } from '../data/mockData';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import { getUserAccessibleCenters } from '../utils/rbac';
 import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 import * as XLSX from 'xlsx';
@@ -63,6 +65,7 @@ interface CenterAnalysis {
 }
 
 export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportProps) {
+  const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter'>('week');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,6 +74,9 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
   const [selectedCenter, setSelectedCenter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'visualization'>('overview');
   const { isDark } = useTheme();
+  
+  // Filter centers based on user permissions
+  const accessibleCenters = getUserAccessibleCenters(user, centers);
 
   // Calculate weekly aggregates
   const totalCenters = centers.length;
@@ -198,7 +204,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
   };
 
   // Generate center-wise analysis
-  const centerAnalysis: CenterAnalysis[] = centers.map(center => {
+  const centerAnalysis: CenterAnalysis[] = accessibleCenters.map(center => {
     const report = mockReports.find(r => r.centerId === center.id);
     const hasReport = !!report;
     
@@ -254,7 +260,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
         acc[item.category] = [];
       }
       acc[item.category].push({
-        center: centers.find(c => c.id === report.centerId)?.name || 'Unknown',
+        center: accessibleCenters.find(c => c.id === report.centerId)?.name || 'Unknown',
         item: item.item,
         status: item.status,
         remarks: item.remarks,
@@ -289,7 +295,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
     return matchesSearch && matchesLocation;
   });
 
-  const locations = [...new Set(centers.map(center => center.location))];
+  const locations = [...new Set(accessibleCenters.map(center => center.location))];
 
   const toggleCategory = (category: string) => {
     setExpandedCategories(prev => ({
