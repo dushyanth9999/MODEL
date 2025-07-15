@@ -52,8 +52,9 @@ export class MemStorage implements IStorage {
     this.currentTemplateId = 1;
     this.currentTrackerId = 1;
     
-    // Initialize default templates
+    // Initialize default templates and users
     this.initializeDefaultTemplates();
+    this.initializeDefaultUsers();
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -228,6 +229,40 @@ export class MemStorage implements IStorage {
     this.actionTrackerTemplates.set(cosTemplate.id, cosTemplate);
     this.actionTrackerTemplates.set(pmTemplate.id, pmTemplate);
   }
+
+  private initializeDefaultUsers(): void {
+    // Add default users for testing
+    const defaultUsers = [
+      {
+        id: this.currentId++,
+        username: "admin@niat.edu",
+        role: "head_of_niat",
+        centerId: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: this.currentId++,
+        username: "cos@niat.edu",
+        role: "cos",
+        centerId: "niat-hyderabad",
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: this.currentId++,
+        username: "pm@niat.edu",
+        role: "pm",
+        centerId: "niat-hyderabad",
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
+
+    defaultUsers.forEach(user => {
+      this.users.set(user.id, user);
+    });
+  }
 }
 
 export class DatabaseStorage implements IStorage {
@@ -333,4 +368,5 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Switch to MemStorage for now to avoid connection issues during migration
+export const storage = new MemStorage();

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, AuthState } from '../types';
+import { User, AuthState } from '../types/index';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<boolean>;
@@ -21,7 +21,7 @@ export const useAuth = () => {
 const mockUsers: User[] = [
   {
     id: '1',
-    email: 'admin@company.com',
+    email: 'admin@niat.edu',
     name: 'System Administrator',
     role: 'admin',
     isActive: true,
@@ -29,19 +29,19 @@ const mockUsers: User[] = [
   },
   {
     id: '2',
-    email: 'shivika@company.com',
-    name: 'Shivika',
+    email: 'cos@niat.edu',
+    name: 'Chief of Staff',
     role: 'cos',
-    centerId: '1',
+    centerId: 'niat-hyderabad',
     isActive: true,
     createdAt: new Date('2024-01-01')
   },
   {
     id: '3',
-    email: 'abhinav@company.com',
-    name: 'Abhinav',
-    role: 'cos',
-    centerId: '2',
+    email: 'pm@niat.edu',
+    name: 'Program Manager',
+    role: 'pm',
+    centerId: 'niat-hyderabad',
     isActive: true,
     createdAt: new Date('2024-01-01')
   },
