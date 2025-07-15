@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X, Download } from 'lucide-react';
 import { centers, reportCategories } from '../data/mockData';
 import { ReportItem, DailyReport } from '../types';
@@ -18,6 +18,7 @@ interface Photo {
 
 export default function DailyReportForm({ onBack, selectedCenterId }: DailyReportFormProps) {
   const [selectedCenter, setSelectedCenter] = useState(selectedCenterId || centers[0].id);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [reportItems, setReportItems] = useState<ReportItem[]>([]);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [summary, setSummary] = useState({
@@ -29,6 +30,31 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
   });
 
   const center = centers.find(c => c.id === selectedCenter);
+
+  // Initialize and refresh data on component mount
+  useEffect(() => {
+    if (!isInitialized) {
+      // Reset form state when component mounts
+      setReportItems([]);
+      setRemarks({});
+      setSummary({
+        goingGood: '',
+        goingWrong: '',
+        highRisk: '',
+        immediateAttention: '',
+        progressFromLastDay: ''
+      });
+      setPhotos([]);
+      setIsInitialized(true);
+    }
+  }, [isInitialized]);
+
+  // Update selected center when prop changes
+  useEffect(() => {
+    if (selectedCenterId && selectedCenterId !== selectedCenter) {
+      setSelectedCenter(selectedCenterId);
+    }
+  }, [selectedCenterId, selectedCenter]);
 
   const exportDailyReport = () => {
     const reportData = {
@@ -224,7 +250,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
         <select
           value={selectedCenter}
           onChange={(e) => setSelectedCenter(e.target.value)}
-          className="w-full max-w-md p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          className="w-full max-w-md p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
         >
           {centers.map(center => (
             <option key={center.id} value={center.id}>
@@ -306,8 +332,8 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                                 placeholder="Enter remarks about this issue..."
                                 value={currentRemarks}
                                 onChange={(e) => handleRemarksChange(itemId, e.target.value)}
-                                className="mt-2 w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-sm focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
-                                rows={2}
+                                className="mt-2 w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                                rows={3}
                               />
                             )}
                           </div>
@@ -374,7 +400,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                       type="text"
                       value={photo.location}
                       onChange={(e) => updatePhoto(photo.id, { location: e.target.value })}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                       placeholder="e.g., Main Hall, Library, etc."
                     />
                   </div>
@@ -386,7 +412,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                     <textarea
                       value={photo.description}
                       onChange={(e) => updatePhoto(photo.id, { description: e.target.value })}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                       rows={2}
                       placeholder="Describe what this photo shows..."
                     />
@@ -409,7 +435,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
             <textarea
               value={summary.goingGood}
               onChange={(e) => setSummary(prev => ({ ...prev, goingGood: e.target.value }))}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
               rows={3}
               placeholder="List positive highlights..."
             />
@@ -421,7 +447,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
             <textarea
               value={summary.goingWrong}
               onChange={(e) => setSummary(prev => ({ ...prev, goingWrong: e.target.value }))}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
               rows={3}
               placeholder="List issues and challenges..."
             />
@@ -433,7 +459,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
             <textarea
               value={summary.highRisk}
               onChange={(e) => setSummary(prev => ({ ...prev, highRisk: e.target.value }))}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
               rows={3}
               placeholder="List high-risk items..."
             />
@@ -445,7 +471,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
             <textarea
               value={summary.immediateAttention}
               onChange={(e) => setSummary(prev => ({ ...prev, immediateAttention: e.target.value }))}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
               rows={3}
               placeholder="List urgent action items..."
             />
@@ -457,7 +483,7 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
             <textarea
               value={summary.progressFromLastDay}
               onChange={(e) => setSummary(prev => ({ ...prev, progressFromLastDay: e.target.value }))}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
               rows={3}
               placeholder="Describe improvements and progress made..."
             />

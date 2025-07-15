@@ -58,11 +58,14 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
         setDailyTrackers(Array.isArray(trackers) ? trackers : []);
       } catch (error) {
         console.error('Error fetching action tracker data:', error);
+        setDailyTrackers([]);
       }
     };
 
-    fetchActionTrackerData();
-  }, [selectedDate]);
+    if (user) {
+      fetchActionTrackerData();
+    }
+  }, [selectedDate, user]);
 
   const userTemplates = actionTemplates.filter(template => 
     template.role === user?.role || (user?.role === 'admin' && template.role === 'cos')
@@ -199,9 +202,23 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsRefreshing(false);
+    try {
+      // Refetch action tracker data
+      const templatesRes = await fetch('/api/action-tracker-templates');
+      const templates = await templatesRes.json();
+      setActionTemplates(templates);
+
+      const trackersRes = await fetch(`/api/daily-action-trackers?date=${selectedDate.toISOString().split('T')[0]}&userId=${user?.id || 1}`);
+      const trackers = await trackersRes.json();
+      setDailyTrackers(Array.isArray(trackers) ? trackers : []);
+      
+      // Simulate brief delay for UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const exportDashboardData = () => {

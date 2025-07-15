@@ -79,21 +79,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock authentication - in production, this would call your API
-    const user = mockUsers.find(u => u.email === email && u.isActive);
-    
-    if (user && password === 'password123') { // Mock password check
-      const updatedUser = { ...user, lastLogin: new Date() };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+    try {
+      setAuthState(prev => ({ ...prev, isLoading: true }));
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock authentication - in production, this would call your API
+      const user = mockUsers.find(u => u.email === email && u.isActive);
+      
+      if (user && password === 'password123') { // Mock password check
+        const updatedUser = { ...user, lastLogin: new Date() };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setAuthState({
+          user: updatedUser,
+          isAuthenticated: true,
+          isLoading: false
+        });
+        return true;
+      }
+      
       setAuthState({
-        user: updatedUser,
-        isAuthenticated: true,
+        user: null,
+        isAuthenticated: false,
         isLoading: false
       });
-      return true;
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      setAuthState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false
+      });
+      return false;
     }
-    
-    return false;
   };
 
   const logout = () => {
