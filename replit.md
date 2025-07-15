@@ -157,6 +157,14 @@ The application follows a monorepo structure with shared TypeScript types and sc
 
 ## Recent Changes
 
+### Migration & Centers Data Update (July 15, 2025)
+✓ Successfully completed migration from Replit Agent to Replit environment
+✓ Updated centers data with authentic NIAT campus information from CSV file
+✓ Replaced all mock center data with 18 real university centers across regions
+✓ Added proper COS names and contact details for each center
+✓ Left PM field blank as requested for future assignment
+✓ Maintained all existing functionality with new authentic data
+
 ### Bug Fixes & Optimization (July 15, 2025)
 - Fixed missing `setRemarks` state variable in DailyReportForm component
 - Moved Action Tracker from Weekly Report to Daily Report section as requested
