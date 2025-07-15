@@ -8,6 +8,7 @@ import * as schema from "@shared/schema";
 const databaseUrl = process.env.DATABASE_URL || process.env.REPLIT_DB_URL;
 
 // Check for DATABASE_URL and provide helpful error message
+if (!databaseUrl) {
   console.warn('⚠️  DATABASE_URL not found, using SQLite fallback for development');
   const sqlite = new Database(':memory:');
   export const db = drizzleSqlite(sqlite, { schema });
