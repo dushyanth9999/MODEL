@@ -72,9 +72,9 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
     }
   }, [selectedDate, user]);
 
-  const userTemplates = actionTemplates.filter(template => 
+  const userTemplates = Array.isArray(actionTemplates) ? actionTemplates.filter(template => 
     template.role === user?.role || (user?.role === 'admin' && template.role === 'cos')
-  );
+  ) : [];
 
   const getCompletionPercentage = (template: any) => {
     if (!Array.isArray(dailyTrackers)) return 0;

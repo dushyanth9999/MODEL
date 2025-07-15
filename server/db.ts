@@ -1,5 +1,5 @@
-import { Pool } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from "@shared/schema";
 
 // Check for DATABASE_URL and provide helpful error message
@@ -16,21 +16,9 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-// Configure connection pool for Supabase
-export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+// Use HTTP connection instead of WebSocket for better Replit compatibility
+const sql = neon(process.env.DATABASE_URL);
 
-// Add connection event handlers
-pool.on('connect', () => {
-  console.log('✅ Supabase database connected successfully');
-});
+console.log('✅ Supabase database connection configured');
 
-pool.on('error', (err) => {
-  console.error('❌ Supabase database connection error:', err);
-});
-
-export const db = drizzle({ client: pool, schema });
+export const db = drizzle(sql, { schema });
