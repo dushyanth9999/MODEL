@@ -10,6 +10,7 @@ import CenterDetail from './components/CenterDetail';
 import AdminPanel from './components/AdminPanel';
 import FileUpload from './components/FileUpload';
 import AdvancedAnalytics from './components/AdvancedAnalytics';
+import ActionTracker from './components/ActionTracker';
 import Login from './components/Login';
 import NotificationCenter from './components/NotificationCenter';
 import { ViewMode, Notification } from './types';
@@ -92,7 +93,7 @@ function AppContent() {
           </div>
         );
       case 'weekly-report':
-        return <WeeklyReport onBack={handleBackToDashboard} />;
+        return <WeeklyReport onBack={handleBackToDashboard} onViewModeChange={handleViewModeChange} />;
       case 'center-detail':
         return <CenterDetail centerId={selectedCenterId} onBack={handleBackToDashboard} />;
       case 'admin':
@@ -106,6 +107,14 @@ function AppContent() {
 
       case 'analytics':
         return <AdvancedAnalytics onBack={handleBackToDashboard} />;
+      case 'action-tracker':
+        return (user?.role === 'admin' || user?.role === 'cos' || user?.role === 'pm') ? (
+          <ActionTracker onBack={handleBackToDashboard} />
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Access denied. Only COS and PM roles can access Action Tracker.</p>
+          </div>
+        );
       default:
         return <Dashboard onViewModeChange={handleViewModeChange} />;
     }

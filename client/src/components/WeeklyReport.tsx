@@ -36,6 +36,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 interface WeeklyReportProps {
   onBack: () => void;
+  onViewModeChange?: (mode: string) => void;
 }
 
 interface CenterAnalysis {
@@ -61,7 +62,7 @@ interface CenterAnalysis {
   achievements: string[];
 }
 
-export default function WeeklyReport({ onBack }: WeeklyReportProps) {
+export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter'>('week');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -568,6 +569,13 @@ export default function WeeklyReport({ onBack }: WeeklyReportProps) {
             <option value="month">This Month</option>
             <option value="quarter">This Quarter</option>
           </select>
+          <button 
+            onClick={() => onViewModeChange?.('action-tracker')}
+            className="bg-nxtwave-red text-white px-4 py-2 rounded-lg hover:bg-nxtwave-red-dark transition-colors flex items-center space-x-2"
+          >
+            <CheckCircle className="h-4 w-4" />
+            <span>Action Tracker</span>
+          </button>
           <button 
             onClick={exportWeeklyReport}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"

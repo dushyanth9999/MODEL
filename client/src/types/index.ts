@@ -195,7 +195,7 @@ export interface Analytics {
   };
 }
 
-export type ViewMode = 'dashboard' | 'daily-form' | 'weekly-report' | 'center-detail' | 'admin' | 'file-upload' | 'analytics' | 'tasks' | 'assets' | 'notifications';
+export type ViewMode = 'dashboard' | 'daily-form' | 'weekly-report' | 'center-detail' | 'admin' | 'file-upload' | 'analytics' | 'tasks' | 'assets' | 'notifications' | 'action-tracker';
 
 export type Theme = 'light' | 'dark' | 'auto';
 
