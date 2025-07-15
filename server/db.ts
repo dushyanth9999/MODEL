@@ -1,21 +1,17 @@
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
+import { drizzle as drizzleSqlite } from 'drizzle-orm/better-sqlite3';
 import ws from "ws";
+import Database from 'better-sqlite3';
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+const databaseUrl = process.env.DATABASE_URL || process.env.REPLIT_DB_URL;
 
 // Check for DATABASE_URL and provide helpful error message
-if (!process.env.DATABASE_URL) {
-  console.error("❌ DATABASE_URL environment variable is not set!");
-  console.error("📝 To fix this:");
-  console.error("   1. In Replit, click on the 'Secrets' tab (lock icon) in the sidebar");
-  console.error("   2. Add a new secret with key: DATABASE_URL");
-  console.error("   3. Set the value to your PostgreSQL connection string");
-  console.error("   4. If using Replit's built-in PostgreSQL, the connection string should be auto-provided");
-  console.error("   5. Restart the server with 'npm run dev'");
-  process.exit(1);
+  console.warn('⚠️  DATABASE_URL not found, using SQLite fallback for development');
+  const sqlite = new Database(':memory:');
+  export const db = drizzleSqlite(sqlite, { schema });
+} else {
+  const client = postgres(databaseUrl);
+  export const db = drizzle(client, { schema });
 }
-
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
