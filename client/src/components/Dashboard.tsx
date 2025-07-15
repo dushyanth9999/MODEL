@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, 
   AlertTriangle, 
@@ -20,6 +20,7 @@ import {
   Activity,
   BarChart3
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { centers, mockReports } from '../data/mockData';
 import { DailyReport } from '../types';
 
@@ -28,17 +29,100 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ onViewModeChange }: DashboardProps) {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [expandedAlerts, setExpandedAlerts] = useState(false);
+  const [actionTemplates, setActionTemplates] = useState<any[]>([]);
+  const [dailyTrackers, setDailyTrackers] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const todayReports = mockReports;
   const totalCenters = centers.length;
   const reportsSubmitted = todayReports.length;
   const pendingReports = totalCenters - reportsSubmitted;
+
+  // Fetch action tracker data
+  useEffect(() => {
+    const fetchActionTrackerData = async () => {
+      try {
+        const templatesRes = await fetch('/api/action-tracker-templates');
+        const templates = await templatesRes.json();
+        setActionTemplates(templates);
+
+        const trackersRes = await fetch(`/api/daily-action-trackers?date=${selectedDate.toISOString().split('T')[0]}&userId=${user?.id || 1}`);
+        const trackers = await trackersRes.json();
+        setDailyTrackers(Array.isArray(trackers) ? trackers : []);
+      } catch (error) {
+        console.error('Error fetching action tracker data:', error);
+      }
+    };
+
+    fetchActionTrackerData();
+  }, [selectedDate]);
+
+  const userTemplates = actionTemplates.filter(template => 
+    template.role === user?.role || (user?.role === 'admin' && template.role === 'cos')
+  );
+
+  const getCompletionPercentage = (template: any) => {
+    if (!Array.isArray(dailyTrackers)) return 0;
+    const tracker = dailyTrackers.find(t => t.templateId === template.id);
+    if (!tracker || !tracker.completedItems || template.items.length === 0) return 0;
+    return Math.round((tracker.completedItems.length / template.items.length) * 100);
+  };
+
+  const handleItemToggle = async (templateId: number, item: string) => {
+    try {
+      if (!Array.isArray(dailyTrackers)) return;
+      const existingTracker = dailyTrackers.find(t => t.templateId === templateId);
+      
+      if (existingTracker) {
+        const isCompleted = existingTracker.completedItems.includes(item);
+        const updatedItems = isCompleted
+          ? existingTracker.completedItems.filter((i: string) => i !== item)
+          : [...existingTracker.completedItems, item];
+
+        const response = await fetch(`/api/daily-action-trackers/${existingTracker.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ completedItems: updatedItems })
+        });
+
+        if (response.ok) {
+          setDailyTrackers(prev => 
+            prev.map(t => 
+              t.id === existingTracker.id 
+                ? { ...t, completedItems: updatedItems }
+                : t
+            )
+          );
+        }
+      } else {
+        const response = await fetch('/api/daily-action-trackers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user?.id,
+            templateId,
+            centerId: user?.centerId,
+            date: selectedDate.toISOString().split('T')[0],
+            completedItems: [item]
+          })
+        });
+
+        if (response.ok) {
+          const newTracker = await response.json();
+          setDailyTrackers(prev => [...prev, newTracker]);
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling item:', error);
+    }
+  };
 
   // Calculate aggregate statistics
   const totalItems = todayReports.reduce((sum, report) => sum + report.items.length, 0);
@@ -170,7 +254,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
             className="btn-outline flex items-center space-x-2 px-4 py-2 transition-colors"
           >
             <Calendar className="h-4 w-4" />
-            <span>Submit Report</span>
+            <span>Daily Report</span>
           </button>
           <button
             onClick={() => onViewModeChange('weekly-report')}
@@ -179,8 +263,90 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
             <BarChart3 className="h-4 w-4" />
             <span>Weekly Analysis</span>
           </button>
+          <button
+            onClick={() => onViewModeChange('action-tracker')}
+            className="btn-outline flex items-center space-x-2 px-4 py-2 transition-colors"
+          >
+            <CheckCircle className="h-4 w-4" />
+            <span>Action Tracker</span>
+          </button>
         </div>
       </div>
+
+      {/* Action Tracker Section */}
+      {userTemplates.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="h-6 w-6 text-red-600" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Daily Action Tracker</h3>
+            </div>
+            <button
+              onClick={() => onViewModeChange('action-tracker')}
+              className="text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+            >
+              View All →
+            </button>
+          </div>
+          
+          <div className="space-y-4">
+            {userTemplates.map((template) => {
+              const tracker = Array.isArray(dailyTrackers) ? dailyTrackers.find(t => t.templateId === template.id) : null;
+              const completionPercentage = getCompletionPercentage(template);
+              
+              return (
+                <div key={template.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        completionPercentage === 100 ? 'bg-green-500' : 
+                        completionPercentage > 0 ? 'bg-yellow-500' : 'bg-gray-300'
+                      }`} />
+                      <h4 className="font-medium text-gray-900 dark:text-white">{template.title}</h4>
+                      <span className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
+                        {template.role.toUpperCase()}
+                      </span>
+                    </div>
+                    <span className={`text-sm font-medium ${
+                      completionPercentage === 100 ? 'text-green-600' : 
+                      completionPercentage > 0 ? 'text-yellow-600' : 'text-gray-500'
+                    }`}>
+                      {completionPercentage}%
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {template.items.slice(0, 3).map((item: string, index: number) => {
+                      const isCompleted = tracker?.completedItems?.includes(item) || false;
+                      
+                      return (
+                        <div key={index} className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            checked={isCompleted}
+                            onChange={() => handleItemToggle(template.id, item)}
+                            className="h-4 w-4 text-red-600 rounded border-gray-300 focus:ring-red-500"
+                          />
+                          <span className={`text-sm ${
+                            isCompleted ? 'line-through text-gray-500' : 'text-gray-700 dark:text-gray-300'
+                          }`}>
+                            {item}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {template.items.length > 3 && (
+                      <div className="text-xs text-gray-500 pl-6">
+                        +{template.items.length - 3} more items...
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Enhanced Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

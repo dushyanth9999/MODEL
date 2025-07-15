@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X } from 'lucide-react';
+import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X, Download } from 'lucide-react';
 import { centers, reportCategories } from '../data/mockData';
 import { ReportItem, DailyReport } from '../types';
 
@@ -29,6 +29,32 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
   });
 
   const center = centers.find(c => c.id === selectedCenter);
+
+  const exportDailyReport = () => {
+    const reportData = {
+      center: center,
+      date: new Date().toISOString().split('T')[0],
+      reportItems: reportItems,
+      summary: summary,
+      photos: photos.map(p => ({ location: p.location, description: p.description })),
+      totalItems: reportItems.length,
+      statusCounts: {
+        OK: reportItems.filter(item => item.status === 'OK').length,
+        ISSUE: reportItems.filter(item => item.status === 'ISSUE').length,
+        HIGH_RISK: reportItems.filter(item => item.status === 'HIGH_RISK').length,
+        NA: reportItems.filter(item => item.status === 'NA').length,
+      }
+    };
+
+    const dataStr = JSON.stringify(reportData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = `daily-report-${center?.name}-${new Date().toISOString().split('T')[0]}.json`;
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
 
   const handleStatusChange = (categoryIndex: number, subcategoryIndex: number, itemIndex: number, status: ReportItem['status']) => {
     const category = reportCategories[categoryIndex];
@@ -174,13 +200,22 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daily Operations Report</h1>
           <p className="text-gray-600 dark:text-gray-400">Submit daily operational status for your center</p>
         </div>
-        <button
-          onClick={handleSubmit}
-          className="btn-primary px-6 py-2 rounded-lg transition-colors flex items-center space-x-2"
-        >
-          <Save className="h-4 w-4" />
-          <span>Submit Report</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={exportDailyReport}
+            className="btn-secondary px-6 py-2 rounded-lg transition-colors flex items-center space-x-2"
+          >
+            <Download className="h-4 w-4" />
+            <span>Export Report</span>
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="btn-primary px-6 py-2 rounded-lg transition-colors flex items-center space-x-2"
+          >
+            <Save className="h-4 w-4" />
+            <span>Submit Report</span>
+          </button>
+        </div>
       </div>
 
       {/* Center Selection */}
