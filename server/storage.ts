@@ -1,5 +1,7 @@
 import { 
   users, 
+  actionTrackerTemplates,
+  dailyActionTrackers,
   type User, 
   type InsertUser, 
   type ActionTrackerTemplate, 
@@ -7,6 +9,8 @@ import {
   type DailyActionTracker,
   type InsertDailyActionTracker 
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -226,4 +230,107 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async updateUser(id: number, userData: Partial<User>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(userData)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getActionTrackerTemplates(): Promise<ActionTrackerTemplate[]> {
+    return await db.select().from(actionTrackerTemplates).where(eq(actionTrackerTemplates.isActive, true));
+  }
+
+  async getActionTrackerTemplatesByRole(role: string): Promise<ActionTrackerTemplate[]> {
+    return await db.select().from(actionTrackerTemplates)
+      .where(and(eq(actionTrackerTemplates.role, role), eq(actionTrackerTemplates.isActive, true)));
+  }
+
+  async createActionTrackerTemplate(template: InsertActionTrackerTemplate): Promise<ActionTrackerTemplate> {
+    const [newTemplate] = await db
+      .insert(actionTrackerTemplates)
+      .values(template)
+      .returning();
+    return newTemplate;
+  }
+
+  async updateActionTrackerTemplate(id: number, templateData: Partial<ActionTrackerTemplate>): Promise<ActionTrackerTemplate | undefined> {
+    const [template] = await db
+      .update(actionTrackerTemplates)
+      .set(templateData)
+      .where(eq(actionTrackerTemplates.id, id))
+      .returning();
+    return template || undefined;
+  }
+
+  async deleteActionTrackerTemplate(id: number): Promise<boolean> {
+    const [template] = await db
+      .update(actionTrackerTemplates)
+      .set({ isActive: false })
+      .where(eq(actionTrackerTemplates.id, id))
+      .returning();
+    return !!template;
+  }
+
+  async getDailyActionTrackers(userId: number, date: Date): Promise<DailyActionTracker[]> {
+    const dateStr = date.toISOString().split('T')[0];
+    return await db.select().from(dailyActionTrackers)
+      .where(and(
+        eq(dailyActionTrackers.userId, userId),
+        eq(dailyActionTrackers.date, new Date(dateStr))
+      ));
+  }
+
+  async getDailyActionTrackersByCenter(centerId: string, date: Date): Promise<DailyActionTracker[]> {
+    const dateStr = date.toISOString().split('T')[0];
+    return await db.select().from(dailyActionTrackers)
+      .where(and(
+        eq(dailyActionTrackers.centerId, centerId),
+        eq(dailyActionTrackers.date, new Date(dateStr))
+      ));
+  }
+
+  async createDailyActionTracker(tracker: InsertDailyActionTracker): Promise<DailyActionTracker> {
+    const [newTracker] = await db
+      .insert(dailyActionTrackers)
+      .values(tracker)
+      .returning();
+    return newTracker;
+  }
+
+  async updateDailyActionTracker(id: number, trackerData: Partial<DailyActionTracker>): Promise<DailyActionTracker | undefined> {
+    const [tracker] = await db
+      .update(dailyActionTrackers)
+      .set(trackerData)
+      .where(eq(dailyActionTrackers.id, id))
+      .returning();
+    return tracker || undefined;
+  }
+}
+
+export const storage = new DatabaseStorage();
