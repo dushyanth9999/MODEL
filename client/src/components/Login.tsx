@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { Building2, Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Building2, Eye, EyeOff, Lock, Mail, Key, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { ForgotPassword } from './ForgotPassword';
+import { ResetPassword } from './ResetPassword';
+import { ChangePassword } from './ChangePassword';
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -8,7 +13,20 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const [view, setView] = useState<'login' | 'forgot' | 'reset' | 'change'>('login');
+  const [resetToken, setResetToken] = useState('');
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const { login, user } = useAuth();
+
+  // Check for reset token in URL
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      setResetToken(token);
+      setView('reset');
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,6 +138,16 @@ export default function Login() {
             </div>
           )}
 
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setView('forgot')}
+              className="text-sm text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300"
+            >
+              Forgot your password?
+            </button>
+          </div>
+
           <div>
             <button
               type="submit"
@@ -133,14 +161,54 @@ export default function Login() {
           <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-800">
             <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Demo Credentials:</h4>
             <div className="text-xs text-red-600 dark:text-red-300 space-y-1">
-              <div>Admin: admin@company.com / password123</div>
-              <div>Head of NIAT: head@niat.edu / password123</div>
-              <div>COS: shivika@company.com / password123</div>
-              <div>COS: abhinav@company.com / password123</div>
+              <div>Admin: admin@niat.edu / admin123</div>
+              <div>Chief of Staff: cos@niat.edu / cos123</div>
+              <div>Program Manager: pm@niat.edu / pm123</div>
             </div>
           </div>
         </form>
+
+        {user && (
+          <div className="mt-4 text-center">
+            <Button
+              variant="outline"
+              onClick={() => setShowChangePassword(true)}
+              className="text-red-600 border-red-200 hover:bg-red-50"
+            >
+              <Key className="w-4 h-4 mr-2" />
+              Change Password
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Forgot Password Dialog */}
+      {view === 'forgot' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <ForgotPassword onBack={() => setView('login')} />
+        </div>
+      )}
+
+      {/* Reset Password Dialog */}
+      {view === 'reset' && resetToken && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <ResetPassword 
+            token={resetToken} 
+            onSuccess={() => {
+              setView('login');
+              setResetToken('');
+              window.history.replaceState({}, '', window.location.pathname);
+            }} 
+          />
+        </div>
+      )}
+
+      {/* Change Password Dialog */}
+      <Dialog open={showChangePassword} onOpenChange={setShowChangePassword}>
+        <DialogContent className="sm:max-w-md">
+          <ChangePassword onClose={() => setShowChangePassword(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

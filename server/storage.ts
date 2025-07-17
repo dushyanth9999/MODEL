@@ -18,6 +18,9 @@ import { eq, and } from "drizzle-orm";
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByVerificationToken(token: string): Promise<User | undefined>;
+  getUserByResetToken(token: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
@@ -71,6 +74,24 @@ export class MemStorage implements IStorage {
   async getUserByUsername(username: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(
       (user) => user.username === username,
+    );
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.email === email,
+    );
+  }
+
+  async getUserByVerificationToken(token: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.emailVerificationToken === token,
+    );
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.passwordResetToken === token,
     );
   }
 
@@ -242,25 +263,46 @@ export class MemStorage implements IStorage {
     const defaultUsers = [
       {
         id: this.currentId++,
-        username: "admin@niat.edu",
+        username: "admin",
+        email: "admin@niat.edu",
+        password: "admin123",
         role: "head_of_niat",
         centerId: null,
+        emailVerified: true,
+        emailVerificationToken: null,
+        passwordResetToken: null,
+        passwordResetExpiry: null,
+        lastLoginAt: null,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: this.currentId++,
-        username: "cos@niat.edu",
+        username: "cos",
+        email: "cos@niat.edu",
+        password: "cos123",
         role: "cos",
         centerId: "niat-hyderabad",
+        emailVerified: true,
+        emailVerificationToken: null,
+        passwordResetToken: null,
+        passwordResetExpiry: null,
+        lastLoginAt: null,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: this.currentId++,
-        username: "pm@niat.edu",
+        username: "pm",
+        email: "pm@niat.edu",
+        password: "pm123",
         role: "pm",
         centerId: "niat-hyderabad",
+        emailVerified: true,
+        emailVerificationToken: null,
+        passwordResetToken: null,
+        passwordResetExpiry: null,
+        lastLoginAt: null,
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -350,17 +392,23 @@ export class DatabaseStorage implements IStorage {
   private async initializeDefaultUsers() {
     const defaultUsers = [
       {
-        username: "admin@niat.edu",
+        username: "admin",
+        email: "admin@niat.edu",
+        password: "admin123",
         role: "head_of_niat",
         centerId: null
       },
       {
-        username: "cos@niat.edu",
+        username: "cos",
+        email: "cos@niat.edu", 
+        password: "cos123",
         role: "cos",
         centerId: "niat-hyderabad"
       },
       {
-        username: "pm@niat.edu",
+        username: "pm",
+        email: "pm@niat.edu",
+        password: "pm123", 
         role: "pm",
         centerId: "niat-hyderabad"
       }
@@ -377,6 +425,21 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async getUserByVerificationToken(token: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.emailVerificationToken, token));
+    return user || undefined;
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.passwordResetToken, token));
     return user || undefined;
   }
 
