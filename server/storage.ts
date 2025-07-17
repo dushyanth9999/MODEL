@@ -472,8 +472,15 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Use MemStorage temporarily until Supabase is configured
-// Note: Supabase connection currently blocked by Replit network restrictions
-// DNS resolution fails for db.*.supabase.co domains in this environment
-// Using MemStorage as stable alternative for this deployment
-export const storage = new MemStorage();
+// Dynamically choose storage based on database availability
+function createStorage(): IStorage {
+  if (db && process.env.DATABASE_URL) {
+    console.log('🗄️  Using database storage');
+    return new DatabaseStorage();
+  } else {
+    console.log('🧠 Using in-memory storage for development');
+    return new MemStorage();
+  }
+}
+
+export const storage = createStorage();
