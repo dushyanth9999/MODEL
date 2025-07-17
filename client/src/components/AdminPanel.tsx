@@ -106,6 +106,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
           id: user.id.toString(),
           email: user.email,
           name: user.username === 'admin' ? 'System Administrator' : 
+                user.username === 'pavan_dharma' ? 'Pavan Dharma' :
                 user.username === 'cos' ? 'Chief of Staff' :
                 user.username === 'pm' ? 'Program Manager' :
                 user.username || user.email.split('@')[0],

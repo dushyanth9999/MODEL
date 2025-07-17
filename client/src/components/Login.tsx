@@ -159,9 +159,10 @@ export default function Login() {
           </div>
 
           <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-800">
-            <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Demo Credentials:</h4>
+            <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Login Credentials:</h4>
             <div className="text-xs text-red-600 dark:text-red-300 space-y-1">
-              <div>Admin: admin@niat.edu / admin123</div>
+              <div>Admin (Full Access): admin@niat.edu / admin123</div>
+              <div>Head of NIAT (View Only): pavan@niat.edu / pavan123</div>
               <div>Chief of Staff: cos@niat.edu / cos123</div>
               <div>Program Manager: pm@niat.edu / pm123</div>
             </div>

@@ -79,7 +79,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'cos' | 'pm' | 'viewer' | 'head_of_niat';
+  role: 'admin' | 'cos' | 'pm' | 'head_of_niat';
   centerId?: string;
   isActive: boolean;
   lastLogin?: Date;

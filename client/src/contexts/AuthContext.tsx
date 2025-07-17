@@ -116,6 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: backendUser.id.toString(),
         email: backendUser.email,
         name: backendUser.username === 'admin' ? 'System Administrator' : 
+              backendUser.username === 'pavan_dharma' ? 'Pavan Dharma' :
               backendUser.username === 'cos' ? 'Chief of Staff' :
               backendUser.username === 'pm' ? 'Program Manager' :
               backendUser.username || backendUser.email.split('@')[0],

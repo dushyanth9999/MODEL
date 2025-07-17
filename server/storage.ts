@@ -266,6 +266,21 @@ export class MemStorage implements IStorage {
         username: "admin",
         email: "admin@niat.edu",
         password: "admin123",
+        role: "admin",
+        centerId: null,
+        emailVerified: true,
+        emailVerificationToken: null,
+        passwordResetToken: null,
+        passwordResetExpiry: null,
+        lastLoginAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: this.currentId++,
+        username: "pavan_dharma",
+        email: "pavan@niat.edu",
+        password: "pavan123",
         role: "head_of_niat",
         centerId: null,
         emailVerified: true,
@@ -395,6 +410,13 @@ export class DatabaseStorage implements IStorage {
         username: "admin",
         email: "admin@niat.edu",
         password: "admin123",
+        role: "admin",
+        centerId: null
+      },
+      {
+        username: "pavan_dharma",
+        email: "pavan@niat.edu",
+        password: "pavan123",
         role: "head_of_niat",
         centerId: null
       },
