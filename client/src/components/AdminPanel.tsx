@@ -25,53 +25,43 @@ interface AdminPanelProps {
   onBack: () => void;
 }
 
-// Mock users data
+// Updated users data to match NIAT system
 const mockUsers: User[] = [
   {
     id: '1',
-    email: 'admin@company.com',
+    email: 'admin@niat.edu',
     name: 'System Administrator',
-    role: 'admin',
+    role: 'head_of_niat',
     isActive: true,
     lastLogin: new Date('2024-01-15T10:30:00'),
     createdAt: new Date('2024-01-01')
   },
   {
     id: '2',
-    email: 'shivika@company.com',
-    name: 'Shivika',
+    email: 'cos@niat.edu',
+    name: 'Chief of Staff',
     role: 'cos',
-    centerId: '1',
+    centerId: 'niat-hyderabad',
     isActive: true,
     lastLogin: new Date('2024-01-15T09:15:00'),
     createdAt: new Date('2024-01-01')
   },
   {
     id: '3',
-    email: 'abhinav@company.com',
-    name: 'Abhinav',
-    role: 'cos',
-    centerId: '2',
+    email: 'pm@niat.edu',
+    name: 'Program Manager',
+    role: 'pm',
+    centerId: 'niat-hyderabad',
     isActive: true,
     lastLogin: new Date('2024-01-14T16:45:00'),
     createdAt: new Date('2024-01-01')
   },
   {
     id: '4',
-    email: 'anurag@company.com',
-    name: 'Anurag',
-    role: 'pm',
-    centerId: '1',
+    email: 'head@niat.edu',
+    name: 'Dr. Rajesh Kumar',
+    role: 'head_of_niat',
     isActive: true,
-    lastLogin: new Date('2024-01-15T08:20:00'),
-    createdAt: new Date('2024-01-02')
-  },
-  {
-    id: '5',
-    email: 'viewer@company.com',
-    name: 'John Viewer',
-    role: 'viewer',
-    isActive: false,
     lastLogin: new Date('2024-01-10T14:30:00'),
     createdAt: new Date('2024-01-05')
   }
@@ -79,8 +69,9 @@ const mockUsers: User[] = [
 
 export default function AdminPanel({ onBack }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<'users' | 'centers' | 'security' | 'system'>('users');
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [users, setUsers] = useState<User[]>([]);
   const [centers, setCenters] = useState<Center[]>(initialCenters);
+  const [isLoading, setIsLoading] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showCenterModal, setShowCenterModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -102,6 +93,46 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     cos: '',
     pm: ''
   });
+
+  // Fetch users from API
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/users');
+      if (response.ok) {
+        const apiUsers = await response.json();
+        // Transform API users to match frontend User type
+        const transformedUsers: User[] = apiUsers.map((user: any) => ({
+          id: user.id.toString(),
+          email: user.email,
+          name: user.username === 'admin' ? 'System Administrator' : 
+                user.username === 'cos' ? 'Chief of Staff' :
+                user.username === 'pm' ? 'Program Manager' :
+                user.username || user.email.split('@')[0],
+          role: user.role,
+          centerId: user.centerId,
+          isActive: user.emailVerified,
+          lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt) : undefined,
+          createdAt: new Date(user.createdAt)
+        }));
+        setUsers(transformedUsers);
+      } else {
+        // Fallback to mock data if API fails
+        setUsers(mockUsers);
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      // Fallback to mock data
+      setUsers(mockUsers);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Load users on component mount
+  React.useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleCreateUser = () => {
     if (newUser.password !== newUser.confirmPassword) {

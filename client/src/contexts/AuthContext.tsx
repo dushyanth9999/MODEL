@@ -90,29 +90,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }));
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock authentication - in production, this would call your API
-      const user = mockUsers.find(u => u.email === email && u.isActive);
-      
-      if (user && password === 'password123') { // Mock password check
-        const updatedUser = { ...user, lastLogin: new Date() };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+      // Call backend API for authentication
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
         setAuthState({
-          user: updatedUser,
-          isAuthenticated: true,
+          user: null,
+          isAuthenticated: false,
           isLoading: false
         });
-        return true;
+        return false;
       }
+
+      const data = await response.json();
+      const backendUser = data.user;
       
+      // Transform backend user to frontend User type
+      const user: User = {
+        id: backendUser.id.toString(),
+        email: backendUser.email,
+        name: backendUser.username === 'admin' ? 'System Administrator' : 
+              backendUser.username === 'cos' ? 'Chief of Staff' :
+              backendUser.username === 'pm' ? 'Program Manager' :
+              backendUser.username || backendUser.email.split('@')[0],
+        role: backendUser.role,
+        centerId: backendUser.centerId,
+        isActive: true,
+        lastLogin: new Date(),
+        createdAt: new Date(backendUser.createdAt || Date.now())
+      };
+      
+      // Store auth state
+      localStorage.setItem('user', JSON.stringify(user));
       setAuthState({
-        user: null,
-        isAuthenticated: false,
+        user,
+        isAuthenticated: true,
         isLoading: false
       });
-      return false;
+      
+      return true;
     } catch (error) {
       console.error('Login error:', error);
       setAuthState({

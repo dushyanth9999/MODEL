@@ -319,9 +319,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Users Routes (for role-based access)
   app.get('/api/users', async (req, res) => {
     try {
-      const users = await storage.getAllUsers();
-      res.json(users);
+      const users = await storage.getAllUsers?.() || [];
+      // Remove sensitive data from response
+      const safeUsers = users.map(({ password, passwordResetToken, emailVerificationToken, passwordResetExpiry, ...user }) => user);
+      res.json(safeUsers);
     } catch (error) {
+      console.error('Get users error:', error);
       res.status(500).json({ error: 'Failed to fetch users' });
     }
   });
