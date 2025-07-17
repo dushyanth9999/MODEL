@@ -15,11 +15,14 @@ import {
   X,
   Building2,
   Plus,
-  MapPin
+  MapPin,
+  Mail,
+  Send
 } from 'lucide-react';
 import { User, Center } from '../types';
 import { centers as initialCenters } from '../data/mockData';
-import { getRoleDisplayName, getRoleBadgeColor } from '../utils/rbac';
+import { getRoleDisplayName, getRoleBadgeColor, canDeleteData } from '../utils/rbac';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AdminPanelProps {
   onBack: () => void;
@@ -68,11 +71,19 @@ const mockUsers: User[] = [
 ];
 
 export default function AdminPanel({ onBack }: AdminPanelProps) {
+  const { user: currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<'users' | 'centers' | 'security' | 'system'>('users');
   const [users, setUsers] = useState<User[]>([]);
   const [centers, setCenters] = useState<Center[]>(initialCenters);
   const [isLoading, setIsLoading] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailData, setEmailData] = useState({
+    recipients: [] as string[],
+    subject: '',
+    message: '',
+    type: 'announcement' as 'announcement' | 'alert' | 'reminder'
+  });
   const [showCenterModal, setShowCenterModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editingCenter, setEditingCenter] = useState<Center | null>(null);
@@ -253,17 +264,47 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
   };
 
   const handleDeleteUser = (userId: string) => {
+    // Check if current user has delete permissions
+    if (!canDeleteData(currentUser)) {
+      alert('You do not have permission to delete users. Only administrators can perform this action.');
+      return;
+    }
+    
     if (confirm('Are you sure you want to delete this user?')) {
       setUsers(users.filter(u => u.id !== userId));
     }
   };
 
   const handleDeleteCenter = (centerId: string) => {
+    // Check if current user has delete permissions
+    if (!canDeleteData(currentUser)) {
+      alert('You do not have permission to delete centers. Only administrators can perform this action.');
+      return;
+    }
+    
     if (confirm('Are you sure you want to delete this center? This will affect all associated users.')) {
       setCenters(centers.filter(c => c.id !== centerId));
       // Also remove center association from users
       setUsers(users.map(u => u.centerId === centerId ? { ...u, centerId: undefined } : u));
     }
+  };
+
+  const handleSendEmail = () => {
+    // Mock email sending - in real app this would integrate with email service
+    console.log('Sending email:', emailData);
+    alert(`Email sent to ${emailData.recipients.length} recipients: ${emailData.subject}`);
+    setShowEmailModal(false);
+    setEmailData({
+      recipients: [],
+      subject: '',
+      message: '',
+      type: 'announcement'
+    });
+  };
+
+  const handleSelectAllUsers = () => {
+    const allEmails = users.filter(u => u.isActive).map(u => u.email);
+    setEmailData(prev => ({ ...prev, recipients: allEmails }));
   };
 
   const toggleUserStatus = (userId: string) => {
@@ -507,6 +548,128 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
     </div>
   );
 
+  const EmailModal = () => (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl max-w-2xl w-full mx-4 border dark:border-gray-700">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Send Email</h3>
+          <button
+            onClick={() => setShowEmailModal(false)}
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Recipients
+            </label>
+            <div className="flex space-x-2 mb-2">
+              <button
+                onClick={handleSelectAllUsers}
+                className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+              >
+                Select All Active Users
+              </button>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Selected: {emailData.recipients.length}
+              </span>
+            </div>
+            <div className="max-h-32 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-gray-50 dark:bg-gray-700">
+              {users.filter(u => u.isActive).map(user => (
+                <label key={user.id} className="flex items-center space-x-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={emailData.recipients.includes(user.email)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setEmailData(prev => ({
+                          ...prev,
+                          recipients: [...prev.recipients, user.email]
+                        }));
+                      } else {
+                        setEmailData(prev => ({
+                          ...prev,
+                          recipients: prev.recipients.filter(email => email !== user.email)
+                        }));
+                      }
+                    }}
+                    className="rounded border-gray-300 dark:border-gray-600"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {user.name} ({user.email})
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Email Type
+            </label>
+            <select
+              value={emailData.type}
+              onChange={(e) => setEmailData(prev => ({ ...prev, type: e.target.value as any }))}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            >
+              <option value="announcement">Announcement</option>
+              <option value="alert">Alert</option>
+              <option value="reminder">Reminder</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Subject
+            </label>
+            <input
+              type="text"
+              value={emailData.subject}
+              onChange={(e) => setEmailData(prev => ({ ...prev, subject: e.target.value }))}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="Enter email subject..."
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Message
+            </label>
+            <textarea
+              value={emailData.message}
+              onChange={(e) => setEmailData(prev => ({ ...prev, message: e.target.value }))}
+              rows={6}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+              placeholder="Enter your message..."
+              required
+            />
+          </div>
+        </div>
+
+        <div className="flex space-x-3 mt-6">
+          <button
+            onClick={handleSendEmail}
+            disabled={!emailData.recipients.length || !emailData.subject || !emailData.message}
+            className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2 font-medium"
+          >
+            <Send className="h-4 w-4" />
+            <span>Send Email</span>
+          </button>
+          <button
+            onClick={() => setShowEmailModal(false)}
+            className="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors font-medium"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -555,13 +718,22 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">User Management</h3>
-                <button
-                  onClick={() => setShowUserModal(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-                >
-                  <UserPlus className="h-4 w-4" />
-                  <span>Add User</span>
-                </button>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setShowEmailModal(true)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+                  >
+                    <Mail className="h-4 w-4" />
+                    <span>Send Email</span>
+                  </button>
+                  <button
+                    onClick={() => setShowUserModal(true)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    <span>Add User</span>
+                  </button>
+                </div>
               </div>
 
               <div className="overflow-x-auto">
@@ -631,15 +803,19 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
                               <button
                                 onClick={() => handleEditUser(user)}
                                 className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                title="Edit User"
                               >
                                 <Edit className="h-4 w-4" />
                               </button>
-                              <button
-                                onClick={() => handleDeleteUser(user.id)}
-                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
+                              {canDeleteData(currentUser) && (
+                                <button
+                                  onClick={() => handleDeleteUser(user.id)}
+                                  className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                  title="Delete User (Admin Only)"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -682,15 +858,19 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
                         <button
                           onClick={() => handleEditCenter(center)}
                           className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                          title="Edit Center"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => handleDeleteCenter(center.id)}
-                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {canDeleteData(currentUser) && (
+                          <button
+                            onClick={() => handleDeleteCenter(center.id)}
+                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                            title="Delete Center (Admin Only)"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                     
@@ -870,6 +1050,7 @@ export default function AdminPanel({ onBack }: AdminPanelProps) {
 
       {showUserModal && <UserModal />}
       {showCenterModal && <CenterModal />}
+      {showEmailModal && <EmailModal />}
     </div>
   );
 }

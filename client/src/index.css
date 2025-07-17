@@ -19,30 +19,30 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    @apply bg-gray-100 dark:bg-gray-800;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-nxtwave-red rounded-full;
+    @apply bg-red-600 dark:bg-red-500 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-nxtwave-red-dark;
+    @apply bg-red-700 dark:bg-red-400;
   }
 }
 
 @layer components {
   /* NIAT branded button styles */
   .btn-primary {
-    @apply bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg;
+    @apply bg-red-700 dark:bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-800 dark:hover:bg-red-700 focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 font-medium shadow-lg;
   }
   
   .btn-secondary {
-    @apply bg-amber-50 text-red-700 px-4 py-2 rounded-lg hover:bg-amber-100 focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 transition-all duration-200 font-medium border border-red-200;
+    @apply bg-amber-50 dark:bg-gray-700 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-amber-100 dark:hover:bg-gray-600 focus:ring-2 focus:ring-amber-400 dark:focus:ring-red-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 font-medium border border-red-200 dark:border-gray-600;
   }
   
   .btn-outline {
-    @apply border-2 border-red-700 text-red-700 px-4 py-2 rounded-lg hover:bg-red-700 hover:text-white focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 font-medium;
+    @apply border-2 border-red-700 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-700 dark:hover:bg-red-600 hover:text-white focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 font-medium;
   }
   
   /* Enhanced card styles */
@@ -65,21 +65,61 @@
   
   /* Status indicators */
   .status-ok {
-    @apply bg-green-100 text-green-800;
+    @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400;
   }
   
   .status-issue {
-    @apply bg-yellow-100 text-yellow-800;
+    @apply bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400;
   }
   
   .status-high-risk {
-    @apply bg-red-100 text-red-800;
+    @apply bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400;
   }
   
   .status-na {
-    @apply bg-gray-100 text-gray-800;
+    @apply bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-400;
   }
-
+  
+  /* Form elements dark theme */
+  .form-input {
+    @apply bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-red-500 dark:focus:border-red-400 focus:ring-red-500 dark:focus:ring-red-400;
+  }
+  
+  .form-label {
+    @apply text-gray-700 dark:text-gray-300 font-medium;
+  }
+  
+  /* Navigation dark theme */
+  .nav-item {
+    @apply text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200;
+  }
+  
+  .nav-item-active {
+    @apply text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border-r-2 border-red-600 dark:border-red-400;
+  }
+  
+  /* Modal and overlay dark theme */
+  .modal-overlay {
+    @apply bg-black/50 dark:bg-black/70 backdrop-blur-sm;
+  }
+  
+  .modal-content {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl;
+  }
+  
+  /* Table dark theme */
+  .table-header {
+    @apply bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700;
+  }
+  
+  .table-row {
+    @apply border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors;
+  }
+  
+  .table-cell {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+  
   /* Gradient backgrounds */
   .gradient-maroon {
     @apply bg-gradient-to-br from-maroon-50 to-maroon-100;

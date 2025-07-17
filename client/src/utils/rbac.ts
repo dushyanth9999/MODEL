@@ -108,3 +108,20 @@ export function canModifyData(user: User | null): boolean {
   if (!user) return false;
   return user.role === 'admin' || user.role === 'cos' || user.role === 'pm';
 }
+
+// COS cannot delete data - only admin can delete
+export function canDeleteData(user: User | null): boolean {
+  if (!user) return false;
+  return user.role === 'admin';
+}
+
+// COS can create and edit but not delete
+export function canCreateData(user: User | null): boolean {
+  if (!user) return false;
+  return user.role === 'admin' || user.role === 'cos' || user.role === 'pm';
+}
+
+export function canEditData(user: User | null): boolean {
+  if (!user) return false;
+  return user.role === 'admin' || user.role === 'cos' || user.role === 'pm';
+}
