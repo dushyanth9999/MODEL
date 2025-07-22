@@ -1,6 +1,6 @@
 // Main App Component - Optimized NIAT Operations Dashboard
 import React, { useState } from 'react';
-import { Routes, Route, Link, useLocation } from 'wouter';
+import { Router, Route, Link, useLocation } from 'wouter';
 import { Menu, X, Sun, Moon, LogOut, Home, FileText, TrendingUp, Settings, User, Building2 } from 'lucide-react';
 import { AppProvider, useAuth, useTheme, canUserAccessAdminPanel } from './contexts/AppContext';
 import { LoginForm } from './components/Auth';
@@ -191,12 +191,12 @@ const AppLayout = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Routes>
+        <Router>
           <Route path="/" component={() => <Dashboard onNavigate={handleNavigate} />} />
           <Route path="/daily-report" component={() => <DailyReportForm onBack={() => setLocation('/')} />} />
           <Route path="/weekly-report" component={() => <WeeklyReport onBack={() => setLocation('/')} />} />
           <Route path="/admin" component={AdminPanel} />
-        </Routes>
+        </Router>
       </main>
     </div>
   );
