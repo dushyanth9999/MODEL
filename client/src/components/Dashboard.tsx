@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Building2, AlertTriangle, CheckCircle, Clock, TrendingUp, Users, Activity, BarChart3, Zap, Brain, Target,
+  Building2, 
   AlertTriangle, 
   CheckCircle, 
   Clock, 
@@ -18,7 +18,10 @@ import {
   MapPin,
   User,
   Activity,
-  BarChart3
+  BarChart3,
+  Zap,
+  Brain,
+  Target
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { centers, mockReports } from '../data/mockData';
