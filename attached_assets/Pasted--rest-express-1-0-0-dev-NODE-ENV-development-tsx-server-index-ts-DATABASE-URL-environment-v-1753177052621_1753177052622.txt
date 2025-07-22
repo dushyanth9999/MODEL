@@ -1,0 +1,84 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+⚠️  DATABASE_URL environment variable is not set!
+📝 Using in-memory storage for development.
+   To use a database, add DATABASE_URL in Replit Secrets:
+   1. Go to https://supabase.com/dashboard/projects
+   2. Create a new project if you haven't already
+   3. Click the 'Connect' button on the top toolbar
+   4. Copy URI value under 'Connection string' -> 'Transaction pooler'
+   5. Replace [YOUR-PASSWORD] with your database password
+   6. Add it as DATABASE_URL in Replit Secrets
+   7. Restart the server with 'npm run dev'
+🧠 Using in-memory storage for development
+✅ MemStorage initialized with default data
+2:32:41 PM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2:32:47 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 5ms
+2:32:47 PM [express] GET /api/action-tracker-templates 200 in 3ms :: [{"id":1,"role":"cos","title":"…
+2:32:47 PM [express] GET /api/action-tracker-templates 200 in 7ms :: [{"id":1,"role":"cos","title":"…
+2:32:47 PM [express] GET /api/daily-action-trackers 200 in 1ms :: []
+2:32:47 PM [express] GET /api/daily-action-trackers 200 in 10ms :: []
+2:33:50 PM [express] GET /api/users 200 in 0ms :: [{"id":1,"username":"admin","email":"admin@niat.ed…
+2:33:50 PM [express] GET /api/users 200 in 7ms :: [{"id":1,"username":"admin","email":"admin@niat.ed…
+2:34:03 PM [express] GET /api/action-tracker-templates 200 in 0ms :: [{"id":1,"role":"cos","title":"…
+2:34:03 PM [express] GET /api/action-tracker-templates 200 in 0ms :: [{"id":1,"role":"cos","title":"…
+2:34:03 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 5ms
+2:34:03 PM [express] GET /api/daily-action-trackers 200 in 0ms :: []
+2:34:03 PM [express] GET /api/daily-action-trackers 200 in 9ms :: []
+2:34:05 PM [express] GET /api/action-tracker-templates 200 in 4ms :: [{"id":1,"role":"cos","title":"…
+2:34:05 PM [express] GET /api/daily-action-trackers 200 in 3ms :: []
+2:34:09 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 4ms
+2:34:11 PM [express] POST /api/auth/login 401 in 1ms :: {"error":"Invalid credentials"}
+2:34:11 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 2ms
+2:34:18 PM [express] POST /api/auth/forgot-password 200 in 11ms :: {"message":"If the email exists, …
+2:36:02 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 9ms
+2:37:08 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 2ms
+2:38:15 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 6ms
+2:39:22 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 6ms
+2:40:29 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 2ms
+2:41:36 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 12ms
+2:43:11 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 5ms
+2:44:18 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 7ms
+2:45:26 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 11ms
+2:46:32 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 6ms
+2:48:06 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 2ms
+2:49:13 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 6ms
+2:50:19 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 2ms
+2:51:26 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 3ms
+2:52:33 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 7ms
+2:54:08 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 8ms
+2:55:15 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 7ms
+2:56:22 PM [express] GET /api/assets/attached_assets/LOGIO_1752487117783.jpg 200 in 2ms
+14:59:59 [vite] hmr update /src/components/Da
+14:59:59 [vite] Internal server error: /home/project/client/src/components/Dashboard.tsx: Identifier 'AlertTriangle' has already been declared. (4:2)
+
+  2 | import { 
+  3 |   Building2, AlertTriangle, CheckCircle, Clock, TrendingUp, Users, Activity, BarChart3, Zap, Brain, Target,
+> 4 |   AlertTriangle, 
+    |   ^
+  5 |   CheckCircle, 
+  6 |   Clock, 
+  7 |   TrendingUp,
+  Plugin: vite:react-babel
+  File: /home/project/client/src/components/Dashboard.tsx:4:2
+  2  |  import { 
+  3  |    Building2, AlertTriangle, CheckCircle, Clock, TrendingUp, Users, Activity, BarChart3, Zap, Brain, Target,
+  4  |    AlertTriangle, 
+     |    ^
+  5  |    CheckCircle, 
+  6  |    Clock, 
+      at constructor (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:360:19)
+      at TypeScriptParserMixin.raise (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:3327:19)
+      at TypeScriptScopeHandler.declareName (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:7039:21)
+      at TypeScriptParserMixin.declareNameFromIdentifier (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:7476:16)
+      at TypeScriptParserMixin.checkIdentifier (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:7472:12)
+      at TypeScriptParserMixin.checkLVal (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:7413:12)
+      at TypeScriptParserMixin.finishImportSpecifier (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:13898:10)
+      at TypeScriptParserMixin.parseImportSpecifier (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:14054:17)
+      at TypeScriptParserMixin.parseImportSpecifier (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:9989:18)
+      at TypeScriptParserMixin.parseNamedImportSpecifiers (file:///home/project/node_modules/@babel/parser/lib/index.js#cjs:14033:36)
