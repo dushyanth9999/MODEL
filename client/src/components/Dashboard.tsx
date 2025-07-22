@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Building2, 
+  Building2, AlertTriangle, CheckCircle, Clock, TrendingUp, Users, Activity, BarChart3, Zap, Brain, Target,
   AlertTriangle, 
   CheckCircle, 
   Clock, 
@@ -25,6 +25,7 @@ import { centers, mockReports } from '../data/mockData';
 import { DailyReport } from '../types';
 import { getUserAccessibleCenters } from '../utils/rbac';
 
+// Enhanced Dashboard with AI insights and predictive analytics
 interface DashboardProps {
   onViewModeChange: (mode: string, centerId?: string) => void;
 }
@@ -34,6 +35,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [showAIInsights, setShowAIInsights] = useState(true);
   const [sortBy, setSortBy] = useState('name');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [expandedAlerts, setExpandedAlerts] = useState(false);
@@ -226,6 +228,44 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
     }
   };
 
+  // AI Insights and Predictions
+  const generateAIInsights = () => {
+    const healthScores = accessibleCenters.map(center => {
+      const report = todayReports.find(r => r.centerId === center.id);
+      if (!report) return 75;
+      const total = report.items.length;
+      const issues = report.items.filter(item => ['ISSUE', 'HIGH_RISK'].includes(item.status)).length;
+      return Math.max(0, Math.round(((total - issues) / total) * 100));
+    });
+
+    const avgHealth = healthScores.reduce((sum, score) => sum + score, 0) / healthScores.length || 0;
+    const riskCenters = healthScores.filter(score => score < 70).length;
+    
+    return {
+      overallTrend: avgHealth > 85 ? 'IMPROVING' : avgHealth > 70 ? 'STABLE' : 'DECLINING',
+      riskLevel: riskCenters > accessibleCenters.length * 0.3 ? 'HIGH' : riskCenters > 0 ? 'MEDIUM' : 'LOW',
+      predictions: [
+        `${Math.round(avgHealth)}% average health score across all centers`,
+        `${riskCenters} center${riskCenters !== 1 ? 's' : ''} require immediate attention`,
+        `Predicted ${Math.round(stats.reportsSubmitted * 1.1)} reports expected tomorrow`,
+        avgHealth > 80 ? 'System performance is above target' : 'Performance optimization recommended'
+      ],
+      recommendations: [
+        riskCenters > 0 ? 'Focus on underperforming centers' : 'Maintain current excellence',
+        stats.pendingReports > 0 ? 'Follow up on pending reports' : 'All reports submitted on time',
+        'Schedule preventive maintenance for next week',
+        'Review staff training programs for continuous improvement'
+      ]
+    };
+  };
+
+  const aiInsights = generateAIInsights();
+
+  // Enhanced notification system
+  const criticalAlerts = todayReports.filter(report => 
+    report.summary.highRisk.length > 0 || report.summary.immediateAttention.length > 0
+  );
+
   const exportDashboardData = () => {
     // This would export current dashboard data
     alert('Dashboard data export feature would be implemented');
@@ -233,6 +273,72 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
 
   return (
     <div className="space-y-6">
+      {/* AI Insights Panel */}
+      {showAIInsights && (
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <Brain className="h-6 w-6 text-purple-600" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">AI-Powered Insights</h3>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                aiInsights.riskLevel === 'HIGH' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                aiInsights.riskLevel === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+              }`}>
+                {aiInsights.riskLevel} RISK
+              </span>
+            </div>
+            <button
+              onClick={() => setShowAIInsights(false)}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              ×
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-medium text-purple-800 dark:text-purple-200 mb-3 flex items-center">
+                <Zap className="h-4 w-4 mr-2" />
+                Key Predictions
+              </h4>
+              <ul className="space-y-2">
+                {aiInsights.predictions.map((prediction, index) => (
+                  <li key={index} className="text-sm text-purple-700 dark:text-purple-300 flex items-start">
+                    <span className="text-purple-500 mr-2">•</span>
+                    {prediction}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-purple-800 dark:text-purple-200 mb-3 flex items-center">
+                <Target className="h-4 w-4 mr-2" />
+                Recommendations
+              </h4>
+              <ul className="space-y-2">
+                {aiInsights.recommendations.map((recommendation, index) => (
+                  <li key={index} className="text-sm text-purple-700 dark:text-purple-300 flex items-start">
+                    <span className="text-purple-500 mr-2">•</span>
+                    {recommendation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-4 flex items-center justify-between">
+            <span className="text-xs text-purple-600 dark:text-purple-400">
+              Last updated: {new Date().toLocaleTimeString()}
+            </span>
+            <button className="text-xs text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium">
+              View Detailed Analysis →
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Enhanced Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
@@ -240,7 +346,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
             src="/api/assets/attached_assets/LOGIO_1752487117783.jpg?v=2" 
             alt="NIAT Logo" 
             className="h-12 w-12 rounded-lg shadow-sm"
-            onError={(e) => {
+            onError={(e: any) => {
               e.currentTarget.style.display = 'none';
             }}
           />
@@ -248,7 +354,7 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
             <h1 className="text-3xl font-bold text-red-700 dark:text-red-400">Ops Dashboard</h1>
             <p className="text-gray-600 dark:text-gray-400 flex items-center space-x-2 mt-1">
               <Activity className="h-4 w-4" />
-              <span>Real-time operations overview across all centers</span>
+              <span>AI-powered operations overview across {totalCenters} centers</span>
               <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded-full">
                 Live
               </span>
@@ -294,6 +400,33 @@ export default function Dashboard({ onViewModeChange }: DashboardProps) {
           </button>
         </div>
       </div>
+
+      {/* Critical Alerts */}
+      {criticalAlerts.length > 0 && (
+        <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <AlertTriangle className="h-6 w-6 text-red-600" />
+            <h3 className="font-semibold text-red-800 dark:text-red-200">Critical Alerts</h3>
+            <span className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 px-2 py-1 rounded-full text-xs font-medium">
+              {criticalAlerts.length} alert{criticalAlerts.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          
+          <div className="space-y-3">
+            {criticalAlerts.slice(0, 3).map(report => {
+              const center = centers.find(c => c.id === report.centerId);
+              return (
+                <div key={report.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-red-200 dark:border-red-700">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-gray-900 dark:text-white">{center?.name}</span>
+                    <span className="text-sm text-red-600 dark:text-red-400">Requires immediate attention</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Action Tracker Section */}
       {userTemplates.length > 0 && (

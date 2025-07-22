@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X, Download, List } from 'lucide-react';
+import { ArrowLeft, Save, AlertCircle, CheckCircle, Clock, AlertTriangle, Camera, Upload, MapPin, Image, X, Download, List, Mic, MicOff, Play, Pause } from 'lucide-react';
 import { centers, reportCategories } from '../data/mockData';
 import { ReportItem, DailyReport } from '../types';
 import ActionTracker from './ActionTracker';
@@ -14,6 +14,8 @@ interface Photo {
   file: File;
   preview: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   description: string;
 }
 
@@ -31,6 +33,108 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
     immediateAttention: '',
     progressFromLastDay: ''
   });
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioRecordings, setAudioRecordings] = useState<any[]>([]);
+  const [currentRecordingField, setCurrentRecordingField] = useState<string | null>(null);
+
+  // Voice recording functionality
+  const startRecording = async (fieldName: string) => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      const chunks: BlobPart[] = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        chunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(blob);
+        
+        // Simulate speech-to-text conversion
+        const mockTranscription = "This is a voice note for " + fieldName;
+        
+        setAudioRecordings(prev => [...prev, {
+          id: Date.now(),
+          fieldName,
+          audioUrl,
+          transcription: mockTranscription,
+          timestamp: new Date()
+        }]);
+        
+        // Auto-fill the field with transcription
+        setSummary(prev => ({
+          ...prev,
+          [fieldName]: prev[fieldName as keyof typeof prev] + (prev[fieldName as keyof typeof prev] ? '\n' : '') + mockTranscription
+        }));
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setCurrentRecordingField(fieldName);
+
+      // Stop recording after 30 seconds
+      setTimeout(() => {
+        if (mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+          stream.getTracks().forEach(track => track.stop());
+          setIsRecording(false);
+          setCurrentRecordingField(null);
+        }
+      }, 30000);
+
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      alert('Could not access microphone. Please check permissions.');
+    }
+  };
+
+  const stopRecording = () => {
+    setIsRecording(false);
+    setCurrentRecordingField(null);
+  };
+
+  // Enhanced photo upload with geolocation
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Get geolocation if available
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const newPhoto: Photo = {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                file,
+                preview: e.target?.result as string,
+                location: '',
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                description: ''
+              };
+              setPhotos(prev => [...prev, newPhoto]);
+            },
+            () => {
+              // Fallback without geolocation
+              const newPhoto: Photo = {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                file,
+                preview: e.target?.result as string,
+                location: '',
+                description: ''
+              };
+              setPhotos(prev => [...prev, newPhoto]);
+            }
+          );
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
 
   const center = centers.find(c => c.id === selectedCenter);
 
@@ -40,13 +144,6 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
       // Reset form state when component mounts
       setReportItems([]);
       setRemarks({});
-      setSummary({
-        goingGood: '',
-        goingWrong: '',
-        highRisk: '',
-        immediateAttention: '',
-        progressFromLastDay: ''
-      });
       setPhotos([]);
       setIsInitialized(true);
     }
@@ -146,26 +243,6 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
     return item?.remarks || '';
   };
 
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newPhoto: Photo = {
-          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-          file,
-          preview: e.target?.result as string,
-          location: '',
-          description: ''
-        };
-        setPhotos(prev => [...prev, newPhoto]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
   const updatePhoto = (photoId: string, updates: Partial<Photo>) => {
     setPhotos(prev => prev.map(photo => 
       photo.id === photoId ? { ...photo, ...updates } : photo
@@ -176,12 +253,50 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
     setPhotos(prev => prev.filter(photo => photo.id !== photoId));
   };
 
+  // Voice Recording Component
+  const VoiceRecorder = ({ fieldName, label }: { fieldName: string, label: string }) => (
+    <div className="flex items-center space-x-2">
+      <button
+        type="button"
+        onClick={() => isRecording && currentRecordingField === fieldName ? stopRecording() : startRecording(fieldName)}
+        className={`p-2 rounded-lg transition-colors ${
+          isRecording && currentRecordingField === fieldName
+            ? 'bg-red-500 text-white animate-pulse'
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+        }`}
+        title={`Record voice note for ${label}`}
+      >
+        {isRecording && currentRecordingField === fieldName ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+      </button>
+      {isRecording && currentRecordingField === fieldName && (
+        <span className="text-sm text-red-600 dark:text-red-400 animate-pulse">Recording...</span>
+      )}
+    </div>
+  );
+
+  // Audio Playback Component
+  const AudioPlayback = ({ recording }: { recording: any }) => (
+    <div className="flex items-center space-x-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+      <button
+        onClick={() => {
+          const audio = new Audio(recording.audioUrl);
+          audio.play();
+        }}
+        className="p-1 bg-blue-500 text-white rounded"
+      >
+        <Play className="h-3 w-3" />
+      </button>
+      <span className="text-xs text-blue-700 dark:text-blue-300">{recording.transcription}</span>
+    </div>
+  );
+
   const handleSubmit = () => {
     // Here you would typically submit to your backend
     console.log('Submitting report for center:', selectedCenter);
     console.log('Report items:', reportItems);
     console.log('Summary:', summary);
     console.log('Photos:', photos);
+    console.log('Audio recordings:', audioRecordings);
     
     alert('Daily report submitted successfully!');
     onBack();
@@ -427,6 +542,12 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
                       placeholder="Describe what this photo shows..."
                     />
                   </div>
+                  
+                  {photo.latitude && photo.longitude && (
+                    <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                      📍 Location: {photo.latitude.toFixed(6)}, {photo.longitude.toFixed(6)}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -442,6 +563,9 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What's going good today?
             </label>
+            <div className="flex items-center space-x-2 mb-2">
+              <VoiceRecorder fieldName="goingGood" label="What's Going Good" />
+            </div>
             <textarea
               value={summary.goingGood}
               onChange={(e) => setSummary(prev => ({ ...prev, goingGood: e.target.value }))}
@@ -449,11 +573,17 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
               rows={3}
               placeholder="List positive highlights..."
             />
+            {audioRecordings.filter(r => r.fieldName === 'goingGood').map(recording => (
+              <AudioPlayback key={recording.id} recording={recording} />
+            ))}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What's going wrong?
             </label>
+            <div className="flex items-center space-x-2 mb-2">
+              <VoiceRecorder fieldName="goingWrong" label="What's Going Wrong" />
+            </div>
             <textarea
               value={summary.goingWrong}
               onChange={(e) => setSummary(prev => ({ ...prev, goingWrong: e.target.value }))}
@@ -461,11 +591,17 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
               rows={3}
               placeholder="List issues and challenges..."
             />
+            {audioRecordings.filter(r => r.fieldName === 'goingWrong').map(recording => (
+              <AudioPlayback key={recording.id} recording={recording} />
+            ))}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What's at high risk?
             </label>
+            <div className="flex items-center space-x-2 mb-2">
+              <VoiceRecorder fieldName="highRisk" label="High Risk Items" />
+            </div>
             <textarea
               value={summary.highRisk}
               onChange={(e) => setSummary(prev => ({ ...prev, highRisk: e.target.value }))}
@@ -473,11 +609,17 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
               rows={3}
               placeholder="List high-risk items..."
             />
+            {audioRecordings.filter(r => r.fieldName === 'highRisk').map(recording => (
+              <AudioPlayback key={recording.id} recording={recording} />
+            ))}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               What needs immediate attention?
             </label>
+            <div className="flex items-center space-x-2 mb-2">
+              <VoiceRecorder fieldName="immediateAttention" label="Immediate Attention Required" />
+            </div>
             <textarea
               value={summary.immediateAttention}
               onChange={(e) => setSummary(prev => ({ ...prev, immediateAttention: e.target.value }))}
@@ -485,11 +627,17 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
               rows={3}
               placeholder="List urgent action items..."
             />
+            {audioRecordings.filter(r => r.fieldName === 'immediateAttention').map(recording => (
+              <AudioPlayback key={recording.id} recording={recording} />
+            ))}
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Progress from last day
             </label>
+            <div className="flex items-center space-x-2 mb-2">
+              <VoiceRecorder fieldName="progressFromLastDay" label="Progress Since Yesterday" />
+            </div>
             <textarea
               value={summary.progressFromLastDay}
               onChange={(e) => setSummary(prev => ({ ...prev, progressFromLastDay: e.target.value }))}
@@ -497,6 +645,9 @@ export default function DailyReportForm({ onBack, selectedCenterId }: DailyRepor
               rows={3}
               placeholder="Describe improvements and progress made..."
             />
+            {audioRecordings.filter(r => r.fieldName === 'progressFromLastDay').map(recording => (
+              <AudioPlayback key={recording.id} recording={recording} />
+            ))}
           </div>
         </div>
       </div>

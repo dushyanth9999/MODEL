@@ -1,5 +1,5 @@
 import type { Notification } from '../types/index';
-import { v4 as uuidv4 } from 'uuid';
+// Using simple ID generation instead of uuid for compatibility
 
 export class NotificationService {
   private static notifications: Notification[] = [];
@@ -17,13 +17,23 @@ export class NotificationService {
   static addNotification(notification: Omit<Notification, 'id' | 'timestamp' | 'read'>): void {
     const newNotification: Notification = {
       ...notification,
-      id: uuidv4(),
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       timestamp: new Date(),
       read: false
     };
 
     this.notifications.unshift(newNotification);
     this.notifyListeners();
+
+    // Enhanced notification with sound
+    if (notification.priority === 'HIGH' || notification.priority === 'CRITICAL') {
+      this.playNotificationSound();
+    }
+
+    // Auto-categorize notifications
+    if (notification.title.toLowerCase().includes('report')) {
+      newNotification.type = 'info';
+    }
 
     // Auto-remove low priority notifications after 5 minutes
     if (notification.priority === 'LOW') {
@@ -35,6 +45,20 @@ export class NotificationService {
     // Show browser notification for high priority
     if (notification.priority === 'HIGH' || notification.priority === 'CRITICAL') {
       this.showBrowserNotification(newNotification);
+    }
+  }
+
+  private static playNotificationSound(): void {
+    try {
+      // Create a simple notification sound
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      oscillator.connect(audioContext.destination);
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.2);
+    } catch (error) {
+      console.log('Could not play notification sound');
     }
   }
 
@@ -121,6 +145,26 @@ export class NotificationService {
     return false;
   }
 
+  // Enhanced notification templates with smart categorization
+  static createSmartNotification(title: string, message: string, context?: any): void {
+    let type: Notification['type'] = 'info';
+    let priority: Notification['priority'] = 'MEDIUM';
+
+    // Smart categorization based on content
+    if (message.toLowerCase().includes('error') || message.toLowerCase().includes('failed')) {
+      type = 'error';
+      priority = 'HIGH';
+    } else if (message.toLowerCase().includes('warning') || message.toLowerCase().includes('attention')) {
+      type = 'warning';
+      priority = 'MEDIUM';
+    } else if (message.toLowerCase().includes('success') || message.toLowerCase().includes('completed')) {
+      type = 'success';
+      priority = 'LOW';
+    }
+
+    this.addNotification({ type, title, message, priority });
+  }
+
   // Predefined notification templates
   static createIssueNotification(centerName: string, issue: string, priority: Notification['priority']): void {
     this.addNotification({
@@ -180,6 +224,26 @@ export class NotificationService {
       title: `Compliance Update - ${centerName}`,
       message: `Compliance score: ${complianceScore}%`,
       priority,
+      actionUrl: '/analytics'
+    });
+  }
+
+  static createMaintenanceScheduledNotification(centerName: string, maintenanceType: string, scheduledDate: Date): void {
+    this.addNotification({
+      type: 'info',
+      title: `Maintenance Scheduled - ${centerName}`,
+      message: `${maintenanceType} scheduled for ${scheduledDate.toLocaleDateString()}`,
+      priority: 'MEDIUM',
+      actionUrl: '/dashboard'
+    });
+  }
+
+  static createPerformanceAlertNotification(centerName: string, metric: string, value: number, threshold: number): void {
+    this.addNotification({
+      type: value > threshold ? 'warning' : 'error',
+      title: `Performance Alert - ${centerName}`,
+      message: `${metric} is ${value}% (threshold: ${threshold}%)`,
+      priority: value > threshold * 1.5 ? 'CRITICAL' : 'HIGH',
       actionUrl: '/analytics'
     });
   }

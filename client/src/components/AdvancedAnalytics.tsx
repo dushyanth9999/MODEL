@@ -6,6 +6,9 @@ import {
   BarChart3, 
   PieChart, 
   Activity,
+  Cpu,
+  Database,
+  Wifi,
   Download,
   Share2,
   Filter,
@@ -23,6 +26,7 @@ import { Bar, Pie, Line } from 'react-chartjs-2';
 import { AnalyticsService } from '../utils/analytics';
 import { ExportService } from '../utils/export';
 import { centers, mockReports } from '../data/mockData';
+import { useAuth } from '../contexts/AuthContext';
 import { Analytics } from '../types';
 import ShareModal from './ShareModal';
 
@@ -33,11 +37,14 @@ interface AdvancedAnalyticsProps {
 }
 
 export default function AdvancedAnalytics({ onBack }: AdvancedAnalyticsProps) {
+  const { user } = useAuth();
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter'>('week');
   const [selectedCenter, setSelectedCenter] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'overview' | 'performance' | 'predictions' | 'benchmarks'>('overview');
+  const [viewMode, setViewMode] = useState<'overview' | 'performance' | 'predictions' | 'benchmarks' | 'realtime'>('overview');
   const [showShareModal, setShowShareModal] = useState(false);
+  const [realtimeData, setRealtimeData] = useState<any>(null);
+  const [systemHealth, setSystemHealth] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,6 +52,7 @@ export default function AdvancedAnalytics({ onBack }: AdvancedAnalyticsProps) {
   }, [selectedPeriod, selectedCenter]);
 
   const generateAnalytics = async () => {
+    console.log('Generating analytics for user:', user?.role);
     setIsLoading(true);
     
     // Simulate API call delay
@@ -78,6 +86,32 @@ export default function AdvancedAnalytics({ onBack }: AdvancedAnalyticsProps) {
     
     setIsLoading(false);
   };
+
+  // Generate real-time system metrics
+  const generateRealtimeMetrics = () => {
+    return {
+      systemLoad: Math.round(Math.random() * 100),
+      memoryUsage: Math.round(Math.random() * 100),
+      networkLatency: Math.round(Math.random() * 200) + 50,
+      activeUsers: Math.round(Math.random() * 50) + 10,
+      databaseConnections: Math.round(Math.random() * 20) + 5,
+      apiResponseTime: Math.round(Math.random() * 500) + 100,
+      errorRate: Math.round(Math.random() * 5),
+      uptime: 99.9
+    };
+  };
+
+  // Update real-time data every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRealtimeData(generateRealtimeMetrics());
+      setSystemHealth({
+        status: Math.random() > 0.1 ? 'HEALTHY' : 'WARNING',
+        lastCheck: new Date()
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     if (!analytics) return;
@@ -249,7 +283,8 @@ export default function AdvancedAnalytics({ onBack }: AdvancedAnalyticsProps) {
               { id: 'overview', label: 'Overview', icon: BarChart3 },
               { id: 'performance', label: 'Performance', icon: Activity },
               { id: 'predictions', label: 'AI Predictions', icon: Brain },
-              { id: 'benchmarks', label: 'Benchmarks', icon: Target }
+              { id: 'benchmarks', label: 'Benchmarks', icon: Target },
+              { id: 'realtime', label: 'Real-time', icon: Cpu }
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -495,6 +530,94 @@ export default function AdvancedAnalytics({ onBack }: AdvancedAnalyticsProps) {
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {viewMode === 'realtime' && realtimeData && (
+            <div className="space-y-6">
+              {/* System Health Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">System Load</p>
+                      <p className={`text-2xl font-bold ${
+                        realtimeData.systemLoad < 70 ? 'text-green-600' : 
+                        realtimeData.systemLoad < 90 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {realtimeData.systemLoad}%
+                      </p>
+                    </div>
+                    <Cpu className={`h-8 w-8 ${
+                      realtimeData.systemLoad < 70 ? 'text-green-600' : 
+                      realtimeData.systemLoad < 90 ? 'text-yellow-600' : 'text-red-600'
+                    }`} />
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Memory Usage</p>
+                      <p className={`text-2xl font-bold ${
+                        realtimeData.memoryUsage < 70 ? 'text-green-600' : 
+                        realtimeData.memoryUsage < 90 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {realtimeData.memoryUsage}%
+                      </p>
+                    </div>
+                    <Database className={`h-8 w-8 ${
+                      realtimeData.memoryUsage < 70 ? 'text-green-600' : 
+                      realtimeData.memoryUsage < 90 ? 'text-yellow-600' : 'text-red-600'
+                    }`} />
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Network Latency</p>
+                      <p className={`text-2xl font-bold ${
+                        realtimeData.networkLatency < 100 ? 'text-green-600' : 
+                        realtimeData.networkLatency < 200 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {realtimeData.networkLatency}ms
+                      </p>
+                    </div>
+                    <Wifi className={`h-8 w-8 ${
+                      realtimeData.networkLatency < 100 ? 'text-green-600' : 
+                      realtimeData.networkLatency < 200 ? 'text-yellow-600' : 'text-red-600'
+                    }`} />
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Active Users</p>
+                      <p className="text-2xl font-bold text-blue-600">{realtimeData.activeUsers}</p>
+                    </div>
+                    <Users className="h-8 w-8 text-blue-600" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Real-time Activity Feed */}
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Live Activity Feed</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Report submitted from NIAT Hyderabad</span>
+                    <span className="text-xs text-gray-500">2 min ago</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">User logged in from Mumbai center</span>
+                    <span className="text-xs text-gray-500">5 min ago</span>
+                  </div>
                 </div>
               </div>
             </div>

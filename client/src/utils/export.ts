@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { DailyReport, WeeklyReport, ExportOptions, Center } from '../types';
@@ -6,6 +7,215 @@ import { DailyReport, WeeklyReport, ExportOptions, Center } from '../types';
 export class ExportService {
   static async exportToExcel(
     data: DailyReport[] | WeeklyReport[],
+    centers: Center[],
+    options: ExportOptions
+  ): Promise<void> {
+    const wb = XLSX.utils.book_new();
+
+    // Enhanced Excel export with multiple sheets and formatting
+    if (data.length > 0 && 'items' in data[0]) {
+      // Daily reports
+      this.addDailyReportsToWorkbook(wb, data as DailyReport[], centers, options);
+    } else {
+      // Weekly reports
+      this.addWeeklyReportsToWorkbook(wb, data as WeeklyReport[], centers, options);
+    }
+
+    // Add metadata sheet
+    this.addMetadataSheet(wb, options);
+
+    const filename = `operations_report_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, filename);
+  }
+
+  private static addMetadataSheet(wb: XLSX.WorkBook, options: ExportOptions): void {
+    const metadataData = [
+      ['NIAT Operations Report - Export Metadata'],
+      [''],
+      ['Export Details'],
+      ['Generated On', new Date().toLocaleString()],
+      ['Export Format', options.format],
+      ['Include Charts', options.includeCharts ? 'Yes' : 'No'],
+      ['Include Photos', options.includePhotos ? 'Yes' : 'No'],
+      [''],
+      ['System Information'],
+      ['Application Version', '2.0.0'],
+      ['Database', 'PostgreSQL'],
+      ['Export Engine', 'SheetJS + jsPDF'],
+      [''],
+      ['Contact Information'],
+      ['Support Email', 'support@niat.edu'],
+      ['Dashboard URL', window.location.origin]
+    ];
+
+    const metadataWS = XLSX.utils.aoa_to_sheet(metadataData);
+    XLSX.utils.book_append_sheet(wb, metadataWS, 'Metadata');
+  }
+
+  // Enhanced PDF export with better formatting
+  static async exportToPDF(
+    elementId: string,
+    filename: string,
+    options: {
+      orientation?: 'portrait' | 'landscape';
+      format?: 'a4' | 'letter';
+      includeCharts?: boolean;
+      includeHeader?: boolean;
+      includeFooter?: boolean;
+    } = {}
+  ): Promise<void> {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      throw new Error(`Element with id "${elementId}" not found`);
+    }
+
+    // Enhanced PDF generation with better quality
+    const canvas = await html2canvas(element, {
+      scale: 3, // Higher quality
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: element.scrollWidth,
+      height: element.scrollHeight
+    });
+
+    const imgData = canvas.toDataURL('image/png', 1.0);
+    const pdf = new jsPDF({
+      orientation: options.orientation || 'portrait',
+      unit: 'mm',
+      format: options.format || 'a4'
+    });
+
+    // Add header if requested
+    if (options.includeHeader !== false) {
+      pdf.setFontSize(16);
+      pdf.setTextColor(185, 28, 28); // NIAT red
+      pdf.text('NIAT Operations Dashboard', 20, 20);
+      
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Generated on ${new Date().toLocaleString()}`, 20, 30);
+    }
+
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 295; // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+
+    let position = options.includeHeader !== false ? 40 : 0; // Account for header
+
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      
+      // Add header to subsequent pages
+      if (options.includeHeader !== false) {
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text('NIAT Operations Dashboard', 20, 15);
+      }
+      
+      pdf.addImage(imgData, 'PNG', 0, position + (options.includeHeader !== false ? 20 : 0), imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    // Add footer if requested
+    if (options.includeFooter !== false) {
+      const pageCount = pdf.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Page ${i} of ${pageCount}`, 190, 285);
+        pdf.text('NIAT Operations Dashboard', 20, 285);
+      }
+    }
+
+    pdf.save(filename);
+  }
+
+  // Enhanced CSV export with better formatting
+  static exportToCSV(data: any[], filename: string, options?: { 
+    includeTimestamp?: boolean;
+    customHeaders?: string[];
+  }): void {
+    if (data.length === 0) return;
+
+    let headers = options?.customHeaders || Object.keys(data[0]);
+    
+    // Add timestamp column if requested
+    if (options?.includeTimestamp) {
+      headers.push('Export Timestamp');
+      data = data.map(row => ({
+        ...row,
+        'Export Timestamp': new Date().toISOString()
+      }));
+    }
+
+    const csvContent = [
+      // Add header row with NIAT branding
+      ['NIAT Operations Dashboard - Data Export'],
+      [`Generated: ${new Date().toLocaleString()}`],
+      [''],
+      headers,
+      ...data.map(row => 
+        headers.map(header => {
+          const value = row[header];
+          return typeof value === 'string' && value.includes(',') 
+            ? `"${value}"` 
+            : value;
+        })
+      )
+    ].map(row => Array.isArray(row) ? row.join(',') : row).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // New: Export to multiple formats simultaneously
+  static async exportToMultipleFormats(
+    data: any,
+    baseName: string,
+    formats: ('excel' | 'pdf' | 'csv' | 'json')[]
+  ): Promise<void> {
+    const timestamp = new Date().toISOString().split('T')[0];
+    
+    for (const format of formats) {
+      const filename = `${baseName}_${timestamp}.${format === 'excel' ? 'xlsx' : format}`;
+      
+      switch (format) {
+        case 'excel':
+          if (Array.isArray(data)) {
+            await this.exportToExcel(data, [], { format: 'excel', includeCharts: true, includePhotos: false });
+          }
+          break;
+        case 'csv':
+          if (Array.isArray(data)) {
+            this.exportToCSV(data, filename, { includeTimestamp: true });
+          }
+          break;
+        case 'json':
+          this.exportToJSON(data, filename);
+          break;
+        case 'pdf':
+          // Would need element ID for PDF export
+          console.log('PDF export requires element ID');
+          break;
+      }
+    }
+  }
+
     centers: Center[],
     options: ExportOptions
   ): Promise<void> {
@@ -229,7 +439,18 @@ export class ExportService {
   }
 
   static exportToJSON(data: any, filename: string): void {
-    const jsonString = JSON.stringify(data, null, 2);
+    // Enhanced JSON export with metadata
+    const exportData = {
+      metadata: {
+        exportedAt: new Date().toISOString(),
+        version: '2.0.0',
+        source: 'NIAT Operations Dashboard',
+        recordCount: Array.isArray(data) ? data.length : 1
+      },
+      data: data
+    };
+    
+    const jsonString = JSON.stringify(exportData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);

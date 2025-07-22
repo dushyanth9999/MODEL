@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  ArrowLeft, 
+  ArrowLeft, Download, TrendingUp, TrendingDown, Minus, Calendar, Share2, Mail, MessageSquare,
   Download, 
   TrendingUp, 
   TrendingDown, 
@@ -33,6 +33,7 @@ import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 import * as XLSX from 'xlsx';
 
+// Enhanced Weekly Report with collaboration features
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement);
 
@@ -74,6 +75,8 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
   const [selectedCenter, setSelectedCenter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'visualization'>('overview');
   const { isDark } = useTheme();
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [collaborators, setCollaborators] = useState<string[]>([]);
   
   // Filter centers based on user permissions
   const accessibleCenters = getUserAccessibleCenters(user, centers);
@@ -407,6 +410,40 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
     }
   };
 
+  // Enhanced sharing functionality
+  const shareReport = (method: 'email' | 'whatsapp' | 'link') => {
+    const reportUrl = `${window.location.origin}/weekly-report/${selectedPeriod}`;
+    const reportTitle = `NIAT Weekly Operations Report - ${weekStart.toLocaleDateString()} to ${weekEnd.toLocaleDateString()}`;
+    
+    switch (method) {
+      case 'email':
+        const emailBody = `Please find the weekly operations report attached.\n\nReport Summary:\n- Total Centers: ${totalCenters}\n- Reports Submitted: ${reportsThisWeek}\n- Overall Health: ${healthPercentage}%\n\nView full report: ${reportUrl}`;
+        window.open(`mailto:?subject=${encodeURIComponent(reportTitle)}&body=${encodeURIComponent(emailBody)}`);
+        break;
+      case 'whatsapp':
+        const whatsappText = `${reportTitle}\n\nKey Metrics:\n📊 ${totalCenters} Centers\n✅ ${reportsThisWeek} Reports\n💚 ${healthPercentage}% Health Score\n\n${reportUrl}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(whatsappText)}`);
+        break;
+      case 'link':
+        navigator.clipboard.writeText(reportUrl);
+        alert('Report link copied to clipboard!');
+        break;
+    }
+  };
+
+  // Collaborative features
+  const addCollaborator = (email: string) => {
+    if (email && !collaborators.includes(email)) {
+      setCollaborators([...collaborators, email]);
+      // In real app, would send invitation
+      alert(`Collaboration invitation sent to ${email}`);
+    }
+  };
+
+  const removeCollaborator = (email: string) => {
+    setCollaborators(collaborators.filter(c => c !== email));
+  };
+
   const CenterDetailModal = ({ center }: { center: CenterAnalysis }) => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl max-w-4xl w-full mx-4 border dark:border-gray-700 max-h-[90vh] overflow-y-auto">
@@ -579,6 +616,98 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
           <button 
             onClick={exportWeeklyReport}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+          >
+            <Download className="h-4 w-4" />
+            <span>Export</span>
+          </button>
+          
+          <div className="relative">
+            <button 
+              onClick={() => setShowShareOptions(!showShareOptions)}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+            >
+              <Share2 className="h-4 w-4" />
+              <span>Share</span>
+            </button>
+            
+            {showShareOptions && (
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700 z-10">
+                <div className="p-2">
+                  <button
+                    onClick={() => shareReport('email')}
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center space-x-2"
+                  >
+                    <Mail className="h-4 w-4" />
+                    <span>Email</span>
+                  </button>
+                  <button
+                    onClick={() => shareReport('whatsapp')}
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center space-x-2"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    <span>WhatsApp</span>
+                  </button>
+                  <button
+                    onClick={() => shareReport('link')}
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center space-x-2"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    <span>Copy Link</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Collaboration Panel */}
+      {user?.role === 'admin' && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Collaboration</h3>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <input
+              type="email"
+              placeholder="Add collaborator email..."
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  addCollaborator((e.target as HTMLInputElement).value);
+                  (e.target as HTMLInputElement).value = '';
+                }
+              }}
+            />
+            <button
+              onClick={() => {
+                const input = document.querySelector('input[placeholder="Add collaborator email..."]') as HTMLInputElement;
+                if (input) {
+                  addCollaborator(input.value);
+                  input.value = '';
+                }
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Add
+            </button>
+          </div>
+          
+          <div className="space-y-2">
+            {collaborators.map(email => (
+              <div key={email} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                <span className="text-sm text-gray-700 dark:text-gray-300">{email}</span>
+                <button
+                  onClick={() => removeCollaborator(email)}
+                  className="text-red-600 hover:text-red-800 text-sm"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
           >
             <Download className="h-4 w-4" />
             <span>Export Report</span>

@@ -1,3 +1,4 @@
+/* Enhanced NIAT Operations Dashboard Styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,11 +6,17 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   
   body {
     @apply transition-colors duration-300 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
     font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Enhanced typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   
   /* Custom scrollbar */
@@ -31,6 +38,23 @@
   }
 }
 
+/* Enhanced animations */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(185, 28, 28, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+}
+
 @layer components {
   /* NIAT branded button styles */
   .btn-primary {
@@ -41,11 +65,22 @@
     @apply bg-amber-50 dark:bg-gray-700 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-amber-100 dark:hover:bg-gray-600 focus:ring-2 focus:ring-amber-400 dark:focus:ring-red-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 font-medium border border-red-200 dark:border-gray-600;
   }
   
+  /* Enhanced button with glow effect */
+  .btn-glow {
+    @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all duration-200 font-medium;
+    animation: pulse-glow 2s infinite;
+    @apply bg-amber-50 dark:bg-gray-700 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-amber-100 dark:hover:bg-gray-600 focus:ring-2 focus:ring-amber-400 dark:focus:ring-red-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 font-medium border border-red-200 dark:border-gray-600;
+  }
+  
   .btn-outline {
     @apply border-2 border-red-700 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-700 dark:hover:bg-red-600 hover:text-white focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 font-medium;
   }
   
   /* Enhanced card styles */
+  .card-interactive {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-soft-lg hover:-translate-y-1 cursor-pointer;
+  }
+  
   .card {
     @apply bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700 transition-all duration-200;
   }
@@ -58,6 +93,11 @@
     @apply bg-gradient-to-br from-nxtwave-cream to-nxtwave-gold-light border-nxtwave-red;
   }
   
+  /* Voice recording indicator */
+  .recording-pulse {
+    animation: pulse-glow 1s infinite;
+  }
+  
   /* Enhanced input styles */
   .input-field {
     @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200;
@@ -65,6 +105,12 @@
   
   /* Status indicators */
   .status-ok {
+    @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400;
+  }
+  
+  /* Enhanced status indicators with animations */
+  .status-ok-animated {
+    @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 animate-pulse;
     @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400;
   }
   
@@ -78,6 +124,11 @@
   
   .status-na {
     @apply bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-400;
+  }
+  
+  /* Geolocation indicator */
+  .geo-indicator {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
   }
   
   /* Form elements dark theme */
@@ -227,6 +278,11 @@
     @apply bg-gradient-to-r from-maroon-600 to-maroon-800 bg-clip-text text-transparent;
   }
   
+  /* Enhanced gradient utilities */
+  .text-gradient-niat {
+    @apply bg-gradient-to-r from-red-600 via-red-700 to-red-800 bg-clip-text text-transparent;
+  }
+  
   /* Glass morphism effect */
   .glass {
     @apply bg-white/10 backdrop-blur-md border border-white/20;
@@ -331,6 +387,11 @@
   outline: none;
 }
 
+/* Enhanced focus for better accessibility */
+.focus-visible:focus-visible {
+  @apply ring-2 ring-red-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+}
+
 .focus-visible:focus-visible {
   @apply ring-2 ring-maroon-500 ring-offset-2;
 }
@@ -338,6 +399,11 @@
 /* Enhanced selection styles */
 ::selection {
   @apply bg-maroon-600 text-white;
+}
+
+/* Enhanced selection for better UX */
+::-moz-selection {
+  @apply bg-red-600 text-white;
 }
 
 /* Loading animation */
@@ -350,6 +416,18 @@
   }
 }
 
+/* Enhanced shimmer effect */
+@keyframes shimmer-enhanced {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.shimmer-enhanced {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer-enhanced 2s infinite;
+}
+
 .shimmer {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200px 100%;
@@ -357,6 +435,10 @@
 }
 
 /* Custom animations */
+.animate-slide-in-up {
+  animation: slideInUp 0.5s ease-out;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -388,6 +470,18 @@
   }
 }
 
+/* Enhanced notification animations */
+@keyframes notification-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 /* Print styles */
 @media print {
   .no-print {
@@ -398,12 +492,22 @@
     page-break-after: always;
   }
   
+  .print-avoid-break {
+    page-break-inside: avoid;
+    page-break-after: always;
+  }
+  
   body {
     @apply text-black bg-white;
   }
   
   .card {
     @apply border border-gray-400;
+  }
+  
+  /* Enhanced print styles */
+  .print-header {
+    @apply text-red-600 font-bold text-lg;
   }
 }
 
@@ -416,6 +520,11 @@
   .btn-primary {
     @apply border-2 border-maroon-800;
   }
+  
+  /* Enhanced high contrast */
+  .text-primary {
+    @apply text-black;
+  }
 }
 
 /* Reduced motion support */
@@ -425,11 +534,21 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  
+  /* Respect reduced motion for new animations */
+  .animate-slide-in-up {
+    animation: none !important;
+  }
 }
 
 /* Status indicator animations */
 .pulse-green {
   animation: pulseGreen 2s infinite;
+}
+
+/* Enhanced pulse animations */
+.pulse-red-enhanced {
+  animation: pulseRed 1.5s infinite;
 }
 
 .pulse-red {
@@ -445,6 +564,15 @@
   }
 }
 
+@keyframes pulseGreenEnhanced {
+  0%, 100% {
+    @apply bg-green-500 shadow-lg;
+  }
+  50% {
+    @apply bg-green-400;
+  }
+}
+
 @keyframes pulseRed {
   0%, 100% {
     @apply bg-red-500;
@@ -454,23 +582,51 @@
   }
 }
 
+/* Enhanced red pulse with glow */
+@keyframes pulseRedEnhanced {
+  0%, 100% {
+    @apply bg-red-500;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    @apply bg-red-400;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+  }
+}
+
 /* Custom logo styles */
 .niat-logo {
   height: 40px;
   width: auto;
+  filter: brightness(1.1) contrast(1.1);
+  transition: all 0.3s ease;
+}
+
+.niat-logo:hover {
   filter: brightness(1.1);
+  transform: scale(1.05);
 }
 
 /* Enhanced notification styles */
 .notification-enter {
   transform: translateX(100%);
   opacity: 0;
+  animation: notification-slide-in 0.3s ease-out;
+}
+
+.notification-enter-enhanced {
+  animation: notification-slide-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .notification-enter-active {
   transform: translateX(0);
   opacity: 1;
   transition: all 300ms ease-out;
+}
+
+/* Enhanced notification transitions */
+.notification-enter-active-enhanced {
+  transition: all 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .notification-exit {
@@ -484,6 +640,16 @@
   transition: all 300ms ease-in;
 }
 
+/* Voice recording styles */
+.voice-recording-active {
+  @apply bg-red-500 text-white animate-pulse;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}
+
+.voice-note-playback {
+  @apply bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-2;
+}
+
 /* QR Code styles */
 .qr-code-container {
   @apply p-4 bg-white rounded-lg border-2 border-gray-200;
@@ -494,9 +660,20 @@
   @apply bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto;
 }
 
+/* Enhanced share modal */
+.share-modal-enhanced {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto border dark:border-gray-700;
+  @apply bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
+
 /* Analytics chart styles */
 .chart-tooltip {
   @apply bg-white border border-gray-200 rounded-lg shadow-lg p-3;
+}
+
+/* Enhanced chart styles */
+.chart-container-enhanced {
+  @apply bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-soft hover:shadow-soft-lg transition-all;
 }
 
 /* Advanced filter styles */
@@ -508,9 +685,28 @@
   @apply bg-maroon-100 text-maroon-800 hover:bg-maroon-200;
 }
 
+/* Enhanced filter chips */
+.filter-chip-enhanced {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-200 cursor-pointer;
+  @apply bg-maroon-100 text-maroon-800 hover:bg-maroon-200;
+}
+
 /* Performance indicator styles */
 .performance-excellent {
   @apply bg-green-500;
+}
+
+/* Enhanced performance indicators with gradients */
+.performance-excellent-enhanced {
+  @apply bg-gradient-to-r from-green-400 to-green-600;
+}
+
+.performance-good-enhanced {
+  @apply bg-gradient-to-r from-yellow-400 to-yellow-600;
+}
+
+.performance-poor-enhanced {
+  @apply bg-gradient-to-r from-red-400 to-red-600;
 }
 
 .performance-good {
@@ -526,12 +722,44 @@
   @apply text-green-600;
 }
 
+/* Enhanced trend indicators with icons */
+.trend-improving-enhanced {
+  @apply text-green-600 font-medium flex items-center space-x-1;
+}
+
+.trend-declining-enhanced {
+  @apply text-red-600 font-medium flex items-center space-x-1;
+}
+
+.trend-stable-enhanced {
+  @apply text-blue-600 font-medium flex items-center space-x-1;
+}
+
 .trend-declining {
   @apply text-red-600;
 }
 
 .trend-stable {
   @apply text-blue-600;
+}
+
+/* Geolocation and mapping styles */
+.geo-marker {
+  @apply w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg;
+}
+
+.geo-accuracy-circle {
+  @apply border-2 border-blue-300 rounded-full opacity-30;
+}
+
+/* Real-time data indicators */
+.realtime-indicator {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300;
+}
+
+.realtime-indicator::before {
+  content: '●';
+  @apply text-green-500 mr-1 animate-pulse;
 }
 
 /* Mobile responsive enhancements */
@@ -544,6 +772,15 @@
     @apply w-full;
   }
   
+  /* Enhanced mobile styles */
+  .mobile-card {
+    @apply p-4 rounded-lg;
+  }
+  
+  .mobile-text {
+    @apply text-sm;
+  }
+  
   .mobile-text-sm {
     @apply text-sm;
   }
@@ -551,11 +788,40 @@
   .mobile-p-2 {
     @apply p-2;
   }
+  
+  /* Mobile-specific voice recording */
+  .mobile-voice-button {
+    @apply w-full p-3 rounded-lg bg-red-600 text-white font-medium;
+  }
+  
+  /* Mobile photo upload */
+  .mobile-photo-grid {
+    @apply grid grid-cols-2 gap-2;
+  }
+  
+  /* Mobile navigation */
+  .mobile-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4;
+  }
 }
 
 /* Dark mode support (if needed in future) */
 @media (prefers-color-scheme: dark) {
   .auto-dark {
     @apply bg-gray-900 text-white;
+  }
+  
+  /* Enhanced dark mode */
+  .auto-dark-enhanced {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
+
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-spin,
+  .animate-bounce {
+    animation: none !important;
   }
 }
