@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Download, TrendingUp, TrendingDown, Minus, Calendar, Share2, Mail, MessageSquare,
-  Download, 
-  TrendingUp, 
-  TrendingDown, 
-  Minus, 
-  Calendar,
   ChevronDown,
   ChevronUp,
   Building2,
@@ -78,7 +73,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [collaborators, setCollaborators] = useState<string[]>([]);
   
-  // Filter centers based on user permissions
+  // Filter centers based on user permissions  
   const accessibleCenters = getUserAccessibleCenters(user, centers);
 
   // Calculate weekly aggregates
@@ -87,13 +82,13 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
   
   const totalItems = mockReports.reduce((sum, report) => sum + report.items.length, 0);
   const okItems = mockReports.reduce((sum, report) => 
-    sum + report.items.filter(item => item.status === 'OK').length, 0);
+    sum + report.items.filter((item: any) => item.status === 'OK').length, 0);
   const issueItems = mockReports.reduce((sum, report) => 
-    sum + report.items.filter(item => item.status === 'ISSUE').length, 0);
+    sum + report.items.filter((item: any) => item.status === 'ISSUE').length, 0);
   const highRiskItems = mockReports.reduce((sum, report) => 
-    sum + report.items.filter(item => item.status === 'HIGH_RISK').length, 0);
+    sum + report.items.filter((item: any) => item.status === 'HIGH_RISK').length, 0);
   const naItems = mockReports.reduce((sum, report) => 
-    sum + report.items.filter(item => item.status === 'NA').length, 0);
+    sum + report.items.filter((item: any) => item.status === 'NA').length, 0);
 
   const healthPercentage = totalItems > 0 ? Math.round((okItems / totalItems) * 100) : 0;
   const totalIssues = issueItems + highRiskItems;
@@ -235,10 +230,10 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
 
     if (hasReport && report) {
       analysis.totalItems = report.items.length;
-      analysis.okItems = report.items.filter(item => item.status === 'OK').length;
-      analysis.issueItems = report.items.filter(item => item.status === 'ISSUE').length;
-      analysis.highRiskItems = report.items.filter(item => item.status === 'HIGH_RISK').length;
-      analysis.naItems = report.items.filter(item => item.status === 'NA').length;
+      analysis.okItems = report.items.filter((item: any) => item.status === 'OK').length;
+      analysis.issueItems = report.items.filter((item: any) => item.status === 'ISSUE').length;
+      analysis.highRiskItems = report.items.filter((item: any) => item.status === 'HIGH_RISK').length;
+      analysis.naItems = report.items.filter((item: any) => item.status === 'NA').length;
       analysis.healthScore = analysis.totalItems > 0 ? Math.round((analysis.okItems / analysis.totalItems) * 100) : 0;
       analysis.lastUpdated = report.submittedAt;
       
@@ -258,7 +253,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
 
   // Group issues by category
   const issuesByCategory = mockReports.reduce((acc, report) => {
-    report.items.filter(item => item.status === 'ISSUE' || item.status === 'HIGH_RISK').forEach(item => {
+    report.items.filter((item: any) => item.status === 'ISSUE' || item.status === 'HIGH_RISK').forEach((item: any) => {
       if (!acc[item.category]) {
         acc[item.category] = [];
       }
@@ -278,6 +273,69 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
     improving: ['Network Infrastructure', 'Student Engagement', 'Facility Cleanliness', 'Learning Platform Usage'],
     declining: ['Bus Punctuality', 'AC Maintenance', 'Cafeteria Service'],
     stable: ['Fire Safety', 'Learning Platform', 'CCTV Monitoring', 'Water Quality', 'Power Supply']
+  };
+
+  // Helper functions
+  const addCollaborator = (email: string) => {
+    if (email && !collaborators.includes(email)) {
+      setCollaborators([...collaborators, email]);
+      // In real app, would send invitation
+      console.log(`Collaboration invitation sent to ${email}`);
+    }
+  };
+
+  const removeCollaborator = (email: string) => {
+    setCollaborators(collaborators.filter(e => e !== email));
+  };
+
+  const shareReport = (platform: string) => {
+    const reportUrl = `${window.location.origin}/weekly-report/${selectedPeriod}`;
+    const reportTitle = `NIAT Weekly Operations Report - ${weekStart.toLocaleDateString()} to ${weekEnd.toLocaleDateString()}`;
+    
+    switch (platform) {
+      case 'email':
+        const emailBody = `Please find the weekly operations report attached.\n\nReport Summary:\n- Total Centers: ${totalCenters}\n- Reports Submitted: ${reportsThisWeek}\n- Overall Health: ${healthPercentage}%\n\nView full report: ${reportUrl}`;
+        window.open(`mailto:?subject=${encodeURIComponent(reportTitle)}&body=${encodeURIComponent(emailBody)}`);
+        break;
+      case 'whatsapp':
+        const whatsappText = `${reportTitle}\n\nKey Metrics:\n📊 ${totalCenters} Centers\n✅ ${reportsThisWeek} Reports\n💚 ${healthPercentage}% Health Score\n\n${reportUrl}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(whatsappText)}`);
+        break;
+      case 'link':
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(reportUrl);
+          alert('Report link copied to clipboard!');
+        }
+        break;
+    }
+    setShowShareOptions(false);
+  };
+
+  // Render center detail modal
+  const renderCenterDetailModal = () => {
+    const center = centerAnalysis.find(c => c.centerId === selectedCenter);
+    if (!center) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">{center.centerName}</h3>
+            <button 
+              onClick={() => setSelectedCenter(null)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              ×
+            </button>
+          </div>
+          <div className="space-y-4">
+            <p><strong>Location:</strong> {center.location}</p>
+            <p><strong>Health Score:</strong> {center.healthScore}%</p>
+            <p><strong>Report Status:</strong> {center.reportSubmitted ? 'Submitted' : 'Pending'}</p>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const weekStart = new Date();
@@ -410,39 +468,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
     }
   };
 
-  // Enhanced sharing functionality
-  const shareReport = (method: 'email' | 'whatsapp' | 'link') => {
-    const reportUrl = `${window.location.origin}/weekly-report/${selectedPeriod}`;
-    const reportTitle = `NIAT Weekly Operations Report - ${weekStart.toLocaleDateString()} to ${weekEnd.toLocaleDateString()}`;
-    
-    switch (method) {
-      case 'email':
-        const emailBody = `Please find the weekly operations report attached.\n\nReport Summary:\n- Total Centers: ${totalCenters}\n- Reports Submitted: ${reportsThisWeek}\n- Overall Health: ${healthPercentage}%\n\nView full report: ${reportUrl}`;
-        window.open(`mailto:?subject=${encodeURIComponent(reportTitle)}&body=${encodeURIComponent(emailBody)}`);
-        break;
-      case 'whatsapp':
-        const whatsappText = `${reportTitle}\n\nKey Metrics:\n📊 ${totalCenters} Centers\n✅ ${reportsThisWeek} Reports\n💚 ${healthPercentage}% Health Score\n\n${reportUrl}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(whatsappText)}`);
-        break;
-      case 'link':
-        navigator.clipboard.writeText(reportUrl);
-        alert('Report link copied to clipboard!');
-        break;
-    }
-  };
 
-  // Collaborative features
-  const addCollaborator = (email: string) => {
-    if (email && !collaborators.includes(email)) {
-      setCollaborators([...collaborators, email]);
-      // In real app, would send invitation
-      alert(`Collaboration invitation sent to ${email}`);
-    }
-  };
-
-  const removeCollaborator = (email: string) => {
-    setCollaborators(collaborators.filter(c => c !== email));
-  };
 
   const CenterDetailModal = ({ center }: { center: CenterAnalysis }) => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -707,13 +733,6 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
           </div>
         </div>
       )}
-
-          >
-            <Download className="h-4 w-4" />
-            <span>Export Report</span>
-          </button>
-        </div>
-      </div>
 
       {/* View Mode Tabs */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700">
@@ -1143,11 +1162,7 @@ export default function WeeklyReport({ onBack, onViewModeChange }: WeeklyReportP
       </div>
 
       {/* Center Detail Modal */}
-      {selectedCenter && (
-        <CenterDetailModal 
-          center={centerAnalysis.find(c => c.centerId === selectedCenter)!} 
-        />
-      )}
+      {selectedCenter && renderCenterDetailModal()}
     </div>
   );
 }

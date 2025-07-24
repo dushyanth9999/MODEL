@@ -82,13 +82,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       }
     } else {
-      setAuthState(prev => ({ ...prev, isLoading: false }));
+      setAuthState((prev: AuthState) => ({ ...prev, isLoading: false }));
     }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      setAuthState(prev => ({ ...prev, isLoading: true }));
+      setAuthState((prev: AuthState) => ({ ...prev, isLoading: true }));
       
       // Call backend API for authentication
       const response = await fetch('/api/auth/login', {
@@ -158,7 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateUser = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
-    setAuthState(prev => ({ ...prev, user }));
+    setAuthState((prev: AuthState) => ({ ...prev, user }));
   };
 
   return (
